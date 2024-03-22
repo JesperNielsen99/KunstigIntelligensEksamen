@@ -1,5 +1,9 @@
 package Pieces;
 
+import java.util.ArrayList;
+
+
+
 public class Rook extends Piece {
 
     public Rook(int x, int y) {
@@ -7,6 +11,10 @@ public class Rook extends Piece {
         currentXPosition = x;
         currentYPosition = y;
     }
+
+    public Rook() {}
+
+
 
     @Override
     public ArrayList<ArrayList<Integer>> getDefaultMoves() {
