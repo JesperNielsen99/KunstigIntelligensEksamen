@@ -15,18 +15,29 @@ public class Board {
         for (int i = 0; i< 8; i++) {
             board.add(new ArrayList<>());
             for (int j = 0; j < 8; j++) {
-                board.get(i).add(new Rook());
+                if (j%2==0 || j%3==0) {
+                    board.get(i).add(null);
+                } else {
+                    board.get(i).add(new Rook());
+                }
             }
         }
     }
 
     public String toString() {
-        String boardString = "*********";
+        String boardString = " *********\n";
         for (int i = 0; i< 8; i++) {
+            boardString += 8-i;
             for (int j = 0; j < 8; j++) {
-                boardString = board.get(i).get(j).toString();
+                if (board.get(i).get(j) == null) {
+                    boardString += " ";
+                } else {
+                    boardString += board.get(i).get(j).toString();
+                }
             }
+            boardString += "\n";
         }
+        boardString += " ABCDEFGH";
         return boardString;
     }
 
