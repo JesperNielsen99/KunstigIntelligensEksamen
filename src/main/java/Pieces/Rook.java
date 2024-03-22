@@ -2,34 +2,65 @@ package Pieces;
 
 public class Rook extends Piece {
 
-    Rook() {
+    public Rook(int x, int y) {
         super();
+        currentXPosition = x;
+        currentYPosition = y;
     }
 
     @Override
-    public int[] getDefaultMoves() {
-        return new int[]{1, -1, 1, -1};
+    public ArrayList<ArrayList<Integer>> getDefaultMoves() {
+        ArrayList<ArrayList<Integer>> newMoveArray = new ArrayList<>();
+
+        for (int i = 0; i < 8; i++) {
+            if (i != currentXPosition) {
+                ArrayList<Integer> move = new ArrayList<>();
+                move.add(i);
+                move.add(currentYPosition);
+                newMoveArray.add(move);
+            }
+        }
+
+        // Add all possible vertical moves
+        for (int i = 0; i < 8; i++) {
+            if (i != currentYPosition) {
+                ArrayList<Integer> move = new ArrayList<>();
+                move.add(currentXPosition);
+                move.add(i);
+                newMoveArray.add(move);
+            }
+        }
+
+        return newMoveArray;
     }
 
     @Override
-    public int[] getLegalMoves(Piece[] board) {
-        int[] legalMoves = new int[]{};
-
-        return new int[0];
+    public ArrayList<ArrayList<Integer>> getMoves() {
+        return null;
     }
 
     @Override
-    public int[] removeIllegalMoves(int[] moves) {
-        return new int[0];
+    public ArrayList<ArrayList<Integer>> getLegalMoves(Piece[] board) {
+        ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
+        return legalMoves;
     }
 
     @Override
-    public int[] removeOccupied() {
-        return new int[0];
+    public void removeIllegalMoves(ArrayList<Integer> moves) {
+
+    }
+
+    @Override
+    public void removeOccupied() {
+
     }
 
     @Override
     public boolean isOccupied(int field) {
         return false;
+    }
+
+    public String toString() {
+        return "R";
     }
 }
