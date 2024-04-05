@@ -8,11 +8,10 @@ public class Game {
         Board board = new Board();
         Move move = new Move();
         board.initializeBoard();
-        Piece testPiece = board.getBoard().get(0).get(2);
-        System.out.println(board.getBoard().get(0).get(2));
-        System.out.println(board.getBoard().get(0).get(2).canBeBlockedStraight);
-        System.out.println(board.getBoard().get(0).get(2).canBeBlockedCross);
         //System.out.println(move.getLegalMoves(board, board.getBoard().get(0).get(1)));
+        System.out.println(board.getBoard().get(0).get(1).getDefaultMoves());
+        System.out.println(move.removeIllegalMoves(board, board.getBoard().get(0).get(1)));
+        System.out.println(move.getLegalMoves(board, board.getBoard().get(0).get(1)));
         System.out.println(board);
     }
 

@@ -27,7 +27,7 @@ public class Move {
         ArrayList<ArrayList<Integer>> illegalMoves = new ArrayList<>();
         for (ArrayList<Integer> move : moves) {
             if (!isOutOfBounds(move) && isOccupied(board, move)) {
-                if (!isOccupiedByYou(board, move, piece.isWhite)) {
+                if (isOccupied(board, move) && isOccupiedByYou(board, move, piece.isWhite)) {
                     illegalMoves.add(move);
                 }
             }
@@ -42,8 +42,14 @@ public class Move {
     }
 
     public ArrayList<ArrayList<Integer>> getLegalMoves(Board board, Piece piece) {
-        ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
-        piece.getLegalMoves(removeIllegalMoves(board, piece));
+        ArrayList<ArrayList<Integer>> legalMoves = piece.getDefaultMoves();
+        ArrayList<ArrayList<Integer>> illegalMoves = removeIllegalMoves(board, piece);
+        for (ArrayList<Integer> move : illegalMoves) {
+            if (legalMoves.contains(move)) {
+                legalMoves.remove(move);
+            }
+            legalMoves.remove(move);
+        }
         return legalMoves;
     }
 }

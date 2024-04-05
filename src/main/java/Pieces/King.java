@@ -31,6 +31,7 @@ public class King extends Piece {
 
         return newMoveArray;
     }
+
     @Override
     public ArrayList<ArrayList<Integer>> getMoves() {
         return null;
