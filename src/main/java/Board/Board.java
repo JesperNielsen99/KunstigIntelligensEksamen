@@ -37,41 +37,41 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             // Assuming black is at the top (0) and white at the bottom (7)
             // Adjust if your board orientation is different
-            board.get(1).set(i, new Pawn(i, 1)); // Black Pawns
-            board.get(6).set(i, new Pawn(i, 6)); // White Pawns
+            board.get(1).set(i, new Pawn(false, i, 1)); // Black Pawns
+            board.get(6).set(i, new Pawn(true, i, 6)); // White Pawns
         }
 
         // Setup Rooks
-        board.get(0).set(0, new Rook(0, 0)); // Black Rook
-        board.get(0).set(7, new Rook(7, 0)); // Black Rook
-        board.get(7).set(0, new Rook(0, 7)); // White Rook
-        board.get(7).set(7, new Rook(7, 7)); // White Rook
+        board.get(0).set(0, new Rook(false, 0, 0)); // Black Rook
+        board.get(0).set(7, new Rook(false, 7, 0)); // Black Rook
+        board.get(7).set(0, new Rook(true, 0, 7)); // White Rook
+        board.get(7).set(7, new Rook(true, 7, 7)); // White Rook
 
         // Setup Queen
-        board.get(0).set(3, new Queen(0, 3)); //Black
-        board.get(7).set(3, new Queen(7, 3)); //White
+        board.get(0).set(3, new Queen(false, 0, 3)); //Black
+        board.get(7).set(3, new Queen(true, 7, 3)); //White
 
         //Setup Bishop
-        board.get(0).set(2, new Bishop(0, 2)); //Black
-        board.get(0).set(5, new Bishop(0, 5)); //Black
-        board.get(7).set(2, new Bishop(7, 2)); //White
-        board.get(7).set(5, new Bishop(7, 5)); //White
+        board.get(0).set(2, new Bishop(false, 0, 2)); //Black
+        board.get(0).set(5, new Bishop(false, 0, 5)); //Black
+        board.get(7).set(2, new Bishop(true, 7, 2)); //White
+        board.get(7).set(5, new Bishop(true, 7, 5)); //White
 
         //Setup Knight (N)
-        board.get(0).set(1, new Knight(0, 1)); //Black
-        board.get(0).set(6, new Knight(0, 6)); //Black
-        board.get(7).set(1, new Knight(7, 1)); //White
-        board.get(7).set(6, new Knight(7, 6)); //White
+        board.get(0).set(1, new Knight(false, 0, 1)); //Black
+        board.get(0).set(6, new Knight(false, 0, 6)); //Black
+        board.get(7).set(1, new Knight(true, 7, 1)); //White
+        board.get(7).set(6, new Knight(true, 7, 6)); //White
 
         //Setup King
-        board.get(0).set(4, new King(0, 4)); //Black
-        board.get(7).set(4, new King(7, 4)); //White
+        board.get(0).set(4, new King(false, 0, 4)); //Black
+        board.get(7).set(4, new King(true, 7, 4)); //White
 
     }
 
     public String toString() {
-        String boardString = " *********\n";
-        for (int i = 0; i< 8; i++) {
+        String boardString = " ********\n";
+        for (int i = 0; i < 8; i++) {
             boardString += 8-i;
             for (int j = 0; j < 8; j++) {
                 if (board.get(i).get(j) == null) {
@@ -85,5 +85,4 @@ public class Board {
         boardString += " ABCDEFGH";
         return boardString;
     }
-
 }

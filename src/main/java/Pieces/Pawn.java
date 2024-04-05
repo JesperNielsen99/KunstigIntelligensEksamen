@@ -5,10 +5,8 @@ import java.util.ArrayList;
 public class Pawn extends Piece {
     private boolean isFirstMove = true;
 
-    public Pawn(int x, int y) {
-        super();
-        currentXPosition = x;
-        currentYPosition = y;
+    public Pawn(boolean isWhite, int x, int y) {
+        super(isWhite, x, y);
     }
 
     @Override

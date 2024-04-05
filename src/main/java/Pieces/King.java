@@ -3,8 +3,8 @@ package Pieces;
 import java.util.ArrayList;
 
 public class King extends Piece{
-    public King(int x, int y) {
-        super();
+    public King(boolean isWhite, int x, int y) {
+        super(isWhite, x, y);
         currentXPosition = x;
         currentYPosition = y;
     }

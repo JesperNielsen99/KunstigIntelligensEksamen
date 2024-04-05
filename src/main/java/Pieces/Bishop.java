@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 public class Bishop extends Piece{
 
-    public Bishop(int x, int y) {
-        super();
-        currentXPosition = x;
-        currentYPosition = y;
+    public Bishop(boolean isWhite, int x, int y) {
+        super(isWhite, x, y);
     }
 
     @Override

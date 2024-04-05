@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 public class Knight extends Piece{
 
-    public Knight(int x, int y) {
-        super();
-        currentXPosition = x;
-        currentYPosition = y;
+    public Knight(boolean isWhite, int x, int y) {
+        super(isWhite, x, y);
     }
 
     @Override
@@ -32,6 +30,10 @@ public class Knight extends Piece{
                 newMove.add(newY);
                 newMoveArray.add(newMove);
             }
+        }
+        int i = 0;
+        if(i < newMoveArray.size()) {
+            System.out.println(newMoveArray.get(i));
         }
 
 
