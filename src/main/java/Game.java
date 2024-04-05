@@ -1,5 +1,6 @@
 import Board.Board;
 import Mechanics.Move;
+import Pieces.Piece;
 
 public class Game {
 
@@ -7,9 +8,12 @@ public class Game {
         Board board = new Board();
         Move move = new Move();
         board.initializeBoard();
-        //System.out.println(move.isOccupiedByYou(board, 1, 1, true));
-        System.out.println(move.getLegalMoves(board, board.getBoard().get(0).get(0)));
-        //System.out.println(board);
+        Piece testPiece = board.getBoard().get(0).get(2);
+        System.out.println(board.getBoard().get(0).get(2));
+        System.out.println(board.getBoard().get(0).get(2).canBeBlockedStraight);
+        System.out.println(board.getBoard().get(0).get(2).canBeBlockedCross);
+        //System.out.println(move.getLegalMoves(board, board.getBoard().get(0).get(1)));
+        System.out.println(board);
     }
 
     public void run() {

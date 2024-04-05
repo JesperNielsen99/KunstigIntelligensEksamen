@@ -10,21 +10,26 @@ public class Move {
     public Move() {
     }
 
+    public boolean isOccupied(Board board, ArrayList<Integer> move) {
+        int x = move.get(0);
+        int y = move.get(1);
+        return board.getBoard().get(x).get(y) != null;
+    }
+
     public boolean isOccupiedByYou(Board board, ArrayList<Integer> move, boolean isWhite) {
         int x = move.get(0);
         int y = move.get(1);
-        if (board.getBoard().get(x).get(y) == null || board.getBoard().get(x).get(y).isWhite != isWhite) {
-            return false;
-        }
-        return true;
+        return board.getBoard().get(x).get(y).isWhite == isWhite;
     }
 
     public ArrayList<ArrayList<Integer>> removeIllegalMoves(Board board, Piece piece) {
-        ArrayList<ArrayList<Integer>> moves =piece.getDefaultMoves();
+        ArrayList<ArrayList<Integer>> moves = piece.getDefaultMoves();
         ArrayList<ArrayList<Integer>> illegalMoves = new ArrayList<>();
         for (ArrayList<Integer> move : moves) {
-            if (!isOutOfBounds(move) && isOccupiedByYou(board, move, piece.isWhite)) {
-                illegalMoves.add(move);
+            if (!isOutOfBounds(move) && isOccupied(board, move)) {
+                if (!isOccupiedByYou(board, move, piece.isWhite)) {
+                    illegalMoves.add(move);
+                }
             }
         }
         return illegalMoves;

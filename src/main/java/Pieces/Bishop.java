@@ -6,6 +6,7 @@ public class Bishop extends Piece{
 
     public Bishop(boolean isWhite, int x, int y) {
         super(isWhite, x, y);
+        canBeBlockedCross = true;
     }
 
     @Override
@@ -49,14 +50,14 @@ public class Bishop extends Piece{
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> illegalMoves) {
         return null;
     }
 
     public String toString() {
         if (isWhite) {
-            return "wH";
+            return "B";
         }
-        return "bH";
+        return "b";
     }
 }

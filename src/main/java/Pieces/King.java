@@ -2,11 +2,9 @@ package Pieces;
 
 import java.util.ArrayList;
 
-public class King extends Piece{
+public class King extends Piece {
     public King(boolean isWhite, int x, int y) {
         super(isWhite, x, y);
-        currentXPosition = x;
-        currentYPosition = y;
     }
 
     @Override
@@ -33,21 +31,20 @@ public class King extends Piece{
 
         return newMoveArray;
     }
-
     @Override
     public ArrayList<ArrayList<Integer>> getMoves() {
         return null;
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> illegalMoves) {
         return null;
     }
 
     public String toString() {
         if (isWhite) {
-            return "wK";
+            return "K";
         }
-        return "bK";
+        return "k";
     }
 }

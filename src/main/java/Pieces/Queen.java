@@ -7,10 +7,9 @@ public class Queen extends Piece{
 
     public Queen(boolean isWhite, int x, int y) {
         super(isWhite, x, y);
+        canBeBlockedStraight = true;
+        canBeBlockedCross = true;
     }
-
-
-
 
     @Override
     public ArrayList<ArrayList<Integer>> getDefaultMoves() {
@@ -62,16 +61,15 @@ public class Queen extends Piece{
     public ArrayList<ArrayList<Integer>> getMoves() {
         return null;
     }
-
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> illegalMoves) {
         return null;
     }
 
     public String toString() {
         if (isWhite) {
-            return "wQ";
+            return "Q";
         }
-        return "bQ";
+        return "q";
     }
 }

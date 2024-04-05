@@ -1,15 +1,15 @@
 package Pieces;
 
-import Mechanics.Move;
-
 import java.util.ArrayList;
 
 
 
 public class Rook extends Piece {
 
+
     public Rook(boolean isWhite, int x, int y) {
         super(isWhite, x, y);
+        canBeBlockedStraight = true;
     }
 
 
@@ -42,17 +42,21 @@ public class Rook extends Piece {
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
-        ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
-
-        return legalMoves;
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> illegalMoves) {
+        ArrayList<ArrayList<Integer>> defaultMoves = getDefaultMoves();
+        for (ArrayList<Integer> move : illegalMoves) {
+            if (defaultMoves.contains(move)) {
+                defaultMoves.remove(move);
+            }
+        }
+        System.out.println(defaultMoves);
+        return defaultMoves;
     }
-
 
     public String toString() {
         if (isWhite) {
-            return "wR";
+            return "R";
         }
-        return "bR";
+        return "r";
     }
 }

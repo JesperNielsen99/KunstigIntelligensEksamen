@@ -48,16 +48,16 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> illegalMoves) {
         ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
         return legalMoves;
     }
 
     public String toString() {
         if (isWhite) {
-            return "wP";
+            return "P";
         }
-        return "bP";
+        return "p";
     }
 
 }

@@ -61,19 +61,19 @@ public class Board {
     }
 
     public String toString() {
-        String boardString = " ********\n";
+        String boardString = "------------------\n";
         for (int i = 0; i < 8; i++) {
-            boardString += 8-i;
+            boardString += 8-i + "|";
             for (int j = 0; j < 8; j++) {
                 if (board.get(8-i-1).get(j) == null) {
-                    boardString += " ";
+                    boardString += " |";
                 } else {
-                    boardString += board.get(8-i-1).get(j).toString();
+                    boardString += board.get(8-i-1).get(j).toString() + "|";
                 }
             }
-            boardString += "\n";
+            boardString += "\n------------------\n";
         }
-        boardString += " ABCDEFGH";
+        boardString += "  A B C D E F G H";
         return boardString;
     }
 }

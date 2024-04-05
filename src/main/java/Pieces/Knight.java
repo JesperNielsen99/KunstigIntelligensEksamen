@@ -41,14 +41,20 @@ public class Knight extends Piece{
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
-        return null;
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> illegalMoves) {
+        ArrayList<ArrayList<Integer>> defaultMoves = getDefaultMoves();
+        for (ArrayList<Integer> move : illegalMoves) {
+            if (defaultMoves.contains(move)) {
+                defaultMoves.remove(move);
+            }
+        }
+        System.out.println(defaultMoves);
+        return defaultMoves;
     }
-
     public String toString() {
         if (isWhite) {
-            return "wH";
+            return "H";
         }
-        return "bH";
+        return "h";
     }
 }
