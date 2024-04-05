@@ -6,13 +6,9 @@ import java.util.ArrayList;
 
 public class Rook extends Piece {
 
-    public Rook(int x, int y) {
-        super();
-        currentXPosition = x;
-        currentYPosition = y;
+    public Rook(boolean isWhite, int x, int y) {
+        super(isWhite, x, y);
     }
-
-    public Rook() {}
 
 
 
@@ -20,17 +16,13 @@ public class Rook extends Piece {
     public ArrayList<ArrayList<Integer>> getDefaultMoves() {
         ArrayList<ArrayList<Integer>> newMoveArray = new ArrayList<>();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 1; i < 8; i++) {
             if (i != currentXPosition) {
                 ArrayList<Integer> move = new ArrayList<>();
                 move.add(i);
                 move.add(currentYPosition);
                 newMoveArray.add(move);
             }
-        }
-
-        // Add all possible vertical moves
-        for (int i = 0; i < 8; i++) {
             if (i != currentYPosition) {
                 ArrayList<Integer> move = new ArrayList<>();
                 move.add(currentXPosition);
