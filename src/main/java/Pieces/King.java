@@ -40,26 +40,14 @@ public class King extends Piece{
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(Piece[] board) {
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
         return null;
     }
 
-    @Override
-    public void removeIllegalMoves(ArrayList<Integer> moves) {
-
-    }
-
-    @Override
-    public void removeOccupied() {
-
-    }
-
-    @Override
-    public boolean isOccupied(int field) {
-        return false;
-    }
-
     public String toString() {
-        return "K";
+        if (isWhite) {
+            return "wK";
+        }
+        return "bK";
     }
 }

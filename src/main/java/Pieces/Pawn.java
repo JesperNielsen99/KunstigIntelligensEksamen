@@ -42,36 +42,22 @@ public class Pawn extends Piece {
         return newMoveArray;
     }
 
-
-
     @Override
     public ArrayList<ArrayList<Integer>> getMoves() {
         return null;
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(Piece[] board) {
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
         ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
         return legalMoves;
     }
 
-    @Override
-    public void removeIllegalMoves(ArrayList<Integer> moves) {
-
-    }
-
-    @Override
-    public void removeOccupied() {
-
-    }
-
-    @Override
-    public boolean isOccupied(int field) {
-        return false;
-    }
-
     public String toString() {
-        return "P";
+        if (isWhite) {
+            return "wP";
+        }
+        return "bP";
     }
 
 }

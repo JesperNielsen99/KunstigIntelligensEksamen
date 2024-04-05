@@ -20,8 +20,10 @@ public abstract class Piece {
 
     public abstract ArrayList<ArrayList<Integer>> getDefaultMoves();
     public abstract ArrayList<ArrayList<Integer>> getMoves();
-    public abstract ArrayList<ArrayList<Integer>> getLegalMoves(Piece[] board);
-    public abstract void removeIllegalMoves(ArrayList<Integer> moves);
-    public abstract void removeOccupied();
-    public abstract boolean isOccupied(int field);
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
+        return removeIllegalMoves(getDefaultMoves());
+    };
+    public ArrayList<ArrayList<Integer>> removeIllegalMoves(ArrayList<ArrayList<Integer>> moves) {
+        return null;
+    };
 }

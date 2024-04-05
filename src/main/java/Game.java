@@ -1,21 +1,15 @@
 import Board.Board;
-import Pieces.Bishop;
-import Pieces.Knight;
-import Pieces.Rook;
-
-import java.util.ArrayList;
+import Mechanics.Move;
 
 public class Game {
 
     public static void main(String[] args) {
-        Rook rook = new Rook(true, 1, 2);
-        ArrayList<ArrayList<Integer>> legalMoves = rook.getDefaultMoves();
-        for (ArrayList<Integer> array: legalMoves) {
-            System.out.println(array);
-        }
         Board board = new Board();
+        Move move = new Move();
         board.initializeBoard();
-        System.out.println(board);
+        //System.out.println(move.isOccupiedByYou(board, 1, 1, true));
+        System.out.println(move.getLegalMoves(board, board.getBoard().get(0).get(0)));
+        //System.out.println(board);
     }
 
     public void run() {

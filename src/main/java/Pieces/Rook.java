@@ -1,5 +1,7 @@
 package Pieces;
 
+import Mechanics.Move;
+
 import java.util.ArrayList;
 
 
@@ -40,27 +42,17 @@ public class Rook extends Piece {
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getLegalMoves(Piece[] board) {
+    public ArrayList<ArrayList<Integer>> getLegalMoves(ArrayList<ArrayList<Integer>> moves) {
         ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
+
         return legalMoves;
     }
 
-    @Override
-    public void removeIllegalMoves(ArrayList<Integer> moves) {
-
-    }
-
-    @Override
-    public void removeOccupied() {
-
-    }
-
-    @Override
-    public boolean isOccupied(int field) {
-        return false;
-    }
 
     public String toString() {
-        return "R";
+        if (isWhite) {
+            return "wR";
+        }
+        return "bR";
     }
 }
