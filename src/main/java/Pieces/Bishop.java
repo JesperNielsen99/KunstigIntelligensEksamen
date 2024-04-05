@@ -21,30 +21,18 @@ public class Bishop extends Piece{
                 move.add(currentYPosition + i);
                 newMoveArray.add(move);
             }
-        }
-
-        // Up and to the left
-        for (int i = 1; i < 8; i++) {
             if (currentXPosition - i >= 0 && currentYPosition + i < 8) {
                 ArrayList<Integer> move = new ArrayList<>();
                 move.add(currentXPosition - i);
                 move.add(currentYPosition + i);
                 newMoveArray.add(move);
             }
-        }
-
-        // Down and to the right
-        for (int i = 1; i < 8; i++) {
             if (currentXPosition + i < 8 && currentYPosition - i >= 0) {
                 ArrayList<Integer> move = new ArrayList<>();
                 move.add(currentXPosition + i);
                 move.add(currentYPosition - i);
                 newMoveArray.add(move);
             }
-        }
-
-        // Down and to the left
-        for (int i = 1; i < 8; i++) {
             if (currentXPosition - i >= 0 && currentYPosition - i >= 0) {
                 ArrayList<Integer> move = new ArrayList<>();
                 move.add(currentXPosition - i);
