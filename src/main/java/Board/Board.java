@@ -25,14 +25,15 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             // Assuming black is at the top (0) and white at the bottom (7)
             // Adjust if your board orientation is different
-            board.get(1).set(i, new Pawn(true, i, 1)); // Black Pawns
-            board.get(6).set(i, new Pawn(false, i, 6)); // White Pawns
+            board.get(1).set(i, new Pawn(true, 1, i)); // Black Pawns
+            board.get(6).set(i, new Pawn(false, 6, i)); // White Pawns
         }
+
 
         // Setup Rooks
         board.get(0).set(0, new Rook(true, 0, 0)); // Black Rook
-        board.get(0).set(7, new Rook(true, 7, 0)); // Black Rook
-        board.get(7).set(0, new Rook(false, 0, 7)); // White Rook
+        board.get(0).set(7, new Rook(true, 0, 7)); // Black Rook
+        board.get(7).set(0, new Rook(false, 7, 0)); // White Rook
         board.get(7).set(7, new Rook(false, 7, 7)); // White Rook
 
         // Setup Queen
