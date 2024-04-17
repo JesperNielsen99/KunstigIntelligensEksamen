@@ -9,17 +9,15 @@ public class Game {
         board = new Board();
         move = new Move();
         board.initializeBoard();
-        //System.out.println(move.getLegalMoves(board, board.getBoard().get(0).get(4)));
-        //System.out.println(board.getBoard().get(0).get(4));
-        //System.out.println(board);
         run();
     }
 
     public static void run() {
         while (true) {
             move.movePiece(board, true);
+            //AI do black stuff
+            //AI.move(board, false);
             move.movePiece(board, false);
-
         }
     }
 }

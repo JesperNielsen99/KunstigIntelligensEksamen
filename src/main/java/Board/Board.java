@@ -7,6 +7,8 @@ import java.util.ArrayList;
 public class Board {
 
     ArrayList<ArrayList<Piece>> board = new ArrayList<>();
+    ArrayList<Piece> blackPieces = new ArrayList<>();
+    ArrayList<Piece> whitePieces = new ArrayList<>();
 
     public Board() {
     }
@@ -55,10 +57,52 @@ public class Board {
         //Setup King
         board.get(0).set(4, new King(true, 0, 4)); //Black
         board.get(7).set(4, new King(false, 7, 4)); //White
+        fillColorArrays();
     }
 
     public ArrayList<ArrayList<Piece>> getBoard() {
         return board;
+    }
+
+    public ArrayList<Piece> getBlackPieces() {
+        return blackPieces;
+    }
+
+    public ArrayList<Piece> getWhitePieces() {
+        return whitePieces;
+    }
+
+    public Piece findKing(boolean isWhite) {
+        if (isWhite) {
+            for (Piece piece : whitePieces) {
+                if (piece.getClass() == King.class) {
+                    return piece;
+                }
+            }
+        } else {
+            for (Piece piece : blackPieces) {
+                if (piece.getClass() == King.class) {
+                    return piece;
+                }
+            }
+        }
+        return null;
+    }
+
+    //public void updatePiece() {}
+
+    private void fillColorArrays() {
+        for (ArrayList<Piece> row : board) {
+            for (Piece piece : row) {
+                if (piece != null) {
+                    if (piece.isWhite) {
+                        whitePieces.add(piece);
+                    } else {
+                        blackPieces.add(piece);
+                    }
+                }
+            }
+        }
     }
 
     public String toString() {

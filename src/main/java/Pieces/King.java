@@ -6,9 +6,10 @@ public class King extends Piece {
 
     public King(boolean isWhite, int x, int y) {
         super(isWhite, x, y);
+        isFirstMove = true;
         super.directions.add(new ArrayList<>() {{ add(1); add(1); }});
-        super.directions.add(new ArrayList<>() {{ add(-1); add(-1); }});
         super.directions.add(new ArrayList<>() {{ add(1); add(-1); }});
+        super.directions.add(new ArrayList<>() {{ add(-1); add(1); }});
         super.directions.add(new ArrayList<>() {{ add(-1); add(-1); }});
         super.directions.add(new ArrayList<>() {{ add(0); add(1); }});
         super.directions.add(new ArrayList<>() {{ add(0); add(-1); }});

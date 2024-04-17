@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public abstract class Piece {
     public boolean isWhite;
+    public boolean isFirstMove = false;
     public int currentXPosition;
     public int currentYPosition;
     public ArrayList<ArrayList<Integer>> directions;
