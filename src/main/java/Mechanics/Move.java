@@ -81,18 +81,109 @@ public class Move {
 
     public ArrayList<ArrayList<Integer>> getLegalMoves(Board board, Piece piece) {
         ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
-        if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class ||piece.getClass() == Queen.class) {
-            for (ArrayList<Integer> direction : piece.directions) {
-                int x = piece.currentXPosition;
-                int y = piece.currentYPosition;
-                ArrayList<Integer> position = new ArrayList<>();
-                position.add(x);
-                position.add(y);
-
-                while (isNotOutOfBounds(position)) {
-                    position = new ArrayList<>();
+        ArrayList<Piece> piecesCheckingKing = isKingInCheck(board, piece);
+        if (piecesCheckingKing.isEmpty()) {
+            if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class || piece.getClass() == Queen.class) {
+                for (ArrayList<Integer> direction : piece.directions) {
+                    int x = piece.currentXPosition;
+                    int y = piece.currentYPosition;
+                    ArrayList<Integer> position = new ArrayList<>();
                     position.add(x);
                     position.add(y);
+
+                    while (isNotOutOfBounds(position)) {
+                        position = new ArrayList<>();
+                        position.add(x);
+                        position.add(y);
+                        int nextX = x + direction.get(0);
+                        int nextY = y + direction.get(1);
+
+                        ArrayList<Integer> move = new ArrayList<>();
+                        move.add(nextX);
+                        move.add(nextY);
+
+                        ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
+
+                        if (legalMoveOrNot.get(0)) {
+                            legalMoves.add(move);
+                            if (legalMoveOrNot.get(1)) {
+                                x = nextX;
+                                y = nextY;
+                            } else {
+                                x = -1;
+                                y = -1;
+                            }
+                        } else {
+                            x = -1;
+                            y = -1;
+                        }
+                    }
+                }
+            } else if (piece.getClass() == Pawn.class) {
+                for (ArrayList<Integer> direction : piece.directions) {
+                    int x = piece.currentXPosition;
+                    int y = piece.currentYPosition;
+                    int nextX = x + direction.get(0);
+                    int nextY = y + direction.get(1);
+
+                    ArrayList<Integer> move = new ArrayList<>();
+
+                    move.add(nextX);
+                    move.add(nextY);
+
+                    ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
+
+                    if (isNotOutOfBounds(move)) {
+                        if (!isOccupied(board, move) && direction == piece.directions.get(0)) {
+                            legalMoves.add(move);
+                            if (piece.isFirstMove && legalMoveOrNot.get(1)) {
+                                x = nextX;
+                                y = nextY;
+                                nextX = x + direction.get(0);
+                                nextY = y + direction.get(1);
+
+                                move = new ArrayList<>();
+
+                                move.add(nextX);
+                                move.add(nextY);
+
+                                legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
+                                if (legalMoveOrNot.get(0)) {
+                                    legalMoves.add(move);
+                                }
+                            }
+                        } else if (isOccupied(board, move) && !isOccupiedByYou(board, move, piece.isWhite) && direction != piece.directions.get(0)) {
+                            legalMoves.add(move);
+                        }
+                    }
+                }
+            } else if (piece.getClass() == King.class) {
+                    for (ArrayList<Integer> direction : piece.directions) {
+                        int x = piece.currentXPosition;
+                        int y = piece.currentYPosition;
+                        int nextX = x + direction.get(0);
+                        int nextY = y + direction.get(1);
+
+                        ArrayList<Integer> move = new ArrayList<>();
+                        move.add(nextX);
+                        move.add(nextY);
+
+                        piece.currentXPosition = nextX;
+                        piece.currentYPosition = nextY;
+                        if (isKingInCheck(board, piece).isEmpty()) {
+                            ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
+
+                            if (legalMoveOrNot.get(0)) {
+                                legalMoves.add(move);
+                            }
+                        }
+                        piece.currentXPosition = x;
+                        piece.currentYPosition = y;
+                    }
+            } else {
+                for (ArrayList<Integer> direction : piece.directions) {
+                    int x = piece.currentXPosition;
+                    int y = piece.currentYPosition;
                     int nextX = x + direction.get(0);
                     int nextY = y + direction.get(1);
 
@@ -104,99 +195,35 @@ public class Move {
 
                     if (legalMoveOrNot.get(0)) {
                         legalMoves.add(move);
-                        if (legalMoveOrNot.get(1)) {
-                            x = nextX;
-                            y = nextY;
-                        } else {
-                            x = -1;
-                            y = -1;
+                    }
+                }
+            }
+        } else if (piecesCheckingKing.size() == 1) {
+            if (piece.getClass() == King.class) {
+                for (ArrayList<Integer> direction : piece.directions) {
+                    int x = piece.currentXPosition;
+                    int y = piece.currentYPosition;
+                    int nextX = x + direction.get(0);
+                    int nextY = y + direction.get(1);
+
+                    ArrayList<Integer> move = new ArrayList<>();
+                    move.add(nextX);
+                    move.add(nextY);
+
+                    piece.currentXPosition = nextX;
+                    piece.currentYPosition = nextY;
+                    if (isKingInCheck(board, piece).isEmpty()) {
+                        ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
+
+                        if (legalMoveOrNot.get(0)) {
+                            legalMoves.add(move);
                         }
-                    } else {
-                        x = -1;
-                        y = -1;
                     }
+                    piece.currentXPosition = x;
+                    piece.currentYPosition = y;
                 }
             }
-        } else if (piece.getClass() == Pawn.class) {
-            for (ArrayList<Integer> direction : piece.directions) {
-                int x = piece.currentXPosition;
-                int y = piece.currentYPosition;
-                int nextX = x + direction.get(0);
-                int nextY = y + direction.get(1);
-
-                ArrayList<Integer> move = new ArrayList<>();
-
-                move.add(nextX);
-                move.add(nextY);
-
-                ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
-
-                if (isNotOutOfBounds(move)) {
-                    if (!isOccupied(board, move) && direction == piece.directions.get(0)) {
-                        legalMoves.add(move);
-                        if (piece.isFirstMove && legalMoveOrNot.get(1)) {
-                            x = nextX;
-                            y = nextY;
-                            nextX = x + direction.get(0);
-                            nextY = y + direction.get(1);
-
-                            move = new ArrayList<>();
-
-                            move.add(nextX);
-                            move.add(nextY);
-
-                            legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
-                            if (legalMoveOrNot.get(0)) {
-                                legalMoves.add(move);
-                            }
-                        }
-                    } else if (isOccupied(board, move) && !isOccupiedByYou(board, move, piece.isWhite) && direction != piece.directions.get(0)) {
-                        legalMoves.add(move);
-                    }
-                }
-            }
-        } else if (piece.getClass() == King.class && !isKingInCheck(board, piece).isEmpty()) {
-            for (ArrayList<Integer> direction : piece.directions) {
-                int x = piece.currentXPosition;
-                int y = piece.currentYPosition;
-                int nextX = x + direction.get(0);
-                int nextY = y + direction.get(1);
-
-                ArrayList<Integer> move = new ArrayList<>();
-                move.add(nextX);
-                move.add(nextY);
-
-                piece.currentXPosition = nextX;
-                piece.currentYPosition = nextY;
-                if (isKingInCheck(board, piece).isEmpty()) {
-                    ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
-
-                    if (legalMoveOrNot.get(0)) {
-                        legalMoves.add(move);
-                    }
-                }
-                piece.currentXPosition = x;
-                piece.currentYPosition = y;
-            }
-
-
         } else {
-            for (ArrayList<Integer> direction : piece.directions) {
-                int x = piece.currentXPosition;
-                int y = piece.currentYPosition;
-                int nextX = x + direction.get(0);
-                int nextY = y + direction.get(1);
-
-                ArrayList<Integer> move = new ArrayList<>();
-                move.add(nextX);
-                move.add(nextY);
-
-                ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
-
-                if (legalMoveOrNot.get(0)) {
-                    legalMoves.add(move);
-                }
-            }
         }
         return legalMoves;
     }
@@ -281,7 +308,7 @@ public class Move {
         String[] positions = input.split(" ");
         if (positions.length == 2) {
             for (String position : positions) {
-                int file = position.charAt(0) - 'A'; // Convert letter to corresponding array index
+                int file = position.charAt(0) - 'a'; // Convert letter to corresponding array index
                 int rank = Character.getNumericValue(position.charAt(1)) - 1; // Convert number to corresponding array index
                 if (position == positions[0]) {
                     coordinates[0] = rank;
@@ -293,7 +320,7 @@ public class Move {
             }
         } else {
             System.out.println("Wrong amount of inputs.");
-            System.out.println("Enter the chess positions (e.g., A3 A5):");
+            System.out.println("Enter the chess positions (e.g., a3 a5):");
             inputScanner();
         }
         return coordinates;

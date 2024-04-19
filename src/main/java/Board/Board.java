@@ -118,7 +118,7 @@ public class Board {
             }
             boardString += "\n------------------\n";
         }
-        boardString += "  A B C D E F G H";
+        boardString += "  a b c d e f g h";
         return boardString;
     }
 }
