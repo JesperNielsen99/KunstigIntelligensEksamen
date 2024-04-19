@@ -4,24 +4,16 @@ import java.util.ArrayList;
 
 public abstract class Piece {
     public boolean isWhite;
+    public boolean isFirstMove = false;
     public int currentXPosition;
     public int currentYPosition;
+    public ArrayList<ArrayList<Integer>> directions;
 
-    ArrayList<ArrayList<Integer>> moves = getMoves();
 
-    public Piece(int piecePosition) {
-    }
     public Piece(boolean isWhite, int currentXPosition, int currentYPosition) {
         this.isWhite = isWhite;
         this.currentXPosition = currentXPosition;
         this.currentYPosition = currentYPosition;
+        directions = new ArrayList<>();
     }
-
-
-    public abstract ArrayList<ArrayList<Integer>> getDefaultMoves();
-    public abstract ArrayList<ArrayList<Integer>> getMoves();
-    public abstract ArrayList<ArrayList<Integer>> getLegalMoves(Piece[] board);
-    public abstract void removeIllegalMoves(ArrayList<Integer> moves);
-    public abstract void removeOccupied();
-    public abstract boolean isOccupied(int field);
 }
