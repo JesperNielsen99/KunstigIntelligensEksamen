@@ -16,4 +16,7 @@ public abstract class Piece {
         this.currentYPosition = currentYPosition;
         directions = new ArrayList<>();
     }
+
+    public abstract int getHeuristicValue();
+
 }
