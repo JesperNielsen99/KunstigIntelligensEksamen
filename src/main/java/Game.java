@@ -14,10 +14,10 @@ public class Game {
 
     public static void run() {
         while (true) {
-            move.movePiece(board, true);
+            move.movePiece1(board, true);
             //AI do black stuff
             //AI.move(board, false);
-            move.movePiece(board, false);
+            move.movePiece1(board, false);
         }
     }
 }
