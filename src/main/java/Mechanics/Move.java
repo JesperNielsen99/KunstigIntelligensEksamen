@@ -283,6 +283,9 @@ public class Move {
                     piece.currentYPosition = newY;
                     board.getBoard().get(newX).set(newY, piece);
                     piece.isFirstMove = false;
+                    if (piece.getClass() == Pawn.class && (newY == 7 || newX == 0)) {
+                        promotePawn(board, piece, newX, newY);
+                    }
                 } else {
                     System.out.println("Illegal move. Please Select a new move.");
                     movePiece(board, isWhite);
@@ -297,6 +300,14 @@ public class Move {
         } else {
             System.out.println("Move your own piece. Please Select a new move.");
             movePiece(board, isWhite);
+        }
+    }
+
+    public void promotePawn(Board board, Piece pawn, int x, int y) {
+        if (pawn.getClass() == Pawn.class && (y == 7 || y == 0)) {
+            Queen newQueen = new Queen(pawn.isWhite, x, y);
+            board.getBoard().get(x).set(y, newQueen);
+            System.out.println("Pawn has been promoted to a Queen!");
         }
     }
 
