@@ -17,9 +17,9 @@ public class Game {
 
     public static void run() {
         while (true) {
-            Piece bishop = new Bishop(true, 2, 3);
-            Piece.printPieceBoardHeuristicValues(bishop);
-            Piece.printHeuristicValues(board);
+//            Piece bishop = new Bishop(true, 2, 3);
+//            Piece.printPieceBoardHeuristicValues(bishop);
+//            Piece.printHeuristicValues(board);
 
 
 
