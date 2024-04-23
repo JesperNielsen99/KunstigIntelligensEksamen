@@ -52,6 +52,3 @@ public abstract class Piece {
     }
 
 
-
-
-}
