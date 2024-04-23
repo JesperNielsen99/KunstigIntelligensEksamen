@@ -24,7 +24,7 @@ public class Board {
         }
 
         // Setup Pawns
-        /*
+
         for (int i = 0; i < 8; i++) {
             // Assuming black is at the top (0) and white at the bottom (7)
             // Adjust if your board orientation is different
@@ -32,7 +32,7 @@ public class Board {
             board.get(6).set(i, new Pawn(false, 6, i)); // White Pawns
         }
 
-         */
+
 
 
         // Setup Rooks
@@ -58,7 +58,7 @@ public class Board {
         board.get(7).set(6, new Knight(false, 7, 6)); //White
 
         //Setup King
-        board.get(1).set(3, new King(true, 1, 3)); //Black
+        board.get(0).set(4, new King(true, 0, 4)); //Black
         //board.get(0).set(4, new King(true, 0, 4)); //Black
         board.get(7).set(4, new King(false, 7, 4)); //White
         fillColorArrays();
