@@ -22,6 +22,7 @@ public abstract class Piece {
 
     //anvendes til beregning af en piece værdi
     public abstract int getHeuristicValue();
+
     //anvendes til at få board værdier til specifik brik, i forbindelse med træk.
     public abstract int[][] getBoardHeuristic();
 
@@ -51,4 +52,4 @@ public abstract class Piece {
         }
     }
 
-
+}
