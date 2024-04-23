@@ -41,6 +41,10 @@ public class Knight extends Piece {
         return knightValue + boardHeuristicValue;
     }
 
+    @Override
+    public int[][] getBoardHeuristic() {
+        return knightBoardHeuristic;
+    }
 
     public String toString() {
         if (isWhite) {

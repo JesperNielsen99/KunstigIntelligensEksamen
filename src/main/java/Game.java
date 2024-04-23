@@ -1,5 +1,6 @@
 import Board.Board;
 import Mechanics.Move;
+import Pieces.Bishop;
 import Pieces.Piece;
 
 public class Game {
@@ -16,12 +17,17 @@ public class Game {
 
     public static void run() {
         while (true) {
+            Piece bishop = new Bishop(true, 2, 3);
+            Piece.printPieceBoardHeuristicValues(bishop);
+            Piece.printHeuristicValues(board);
+
+
+
             move.movePiece1(board, true);
             //AI do black stuff
             //AI.move(board, false);
-            move.movePiece(board, false);
 
-            piece.printHeuristicValues(board);
+            Piece.printHeuristicValues(board);
             move.movePiece1(board, false);
         }
     }

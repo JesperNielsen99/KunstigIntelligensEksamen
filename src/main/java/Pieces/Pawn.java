@@ -43,6 +43,11 @@ public class Pawn extends Piece {
         return pawnValue + boardHeuristicValue;
     }
 
+    @Override
+    public int[][] getBoardHeuristic() {
+        return pawnBoardHeuristic;
+    }
+
     public String toString() {
         if (isWhite) {
             return "P";

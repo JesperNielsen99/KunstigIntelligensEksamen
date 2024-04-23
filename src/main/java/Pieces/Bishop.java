@@ -37,6 +37,12 @@ public class Bishop extends Piece{
         return bishopValue + boardHeuristicValue;
         }
 
+    @Override
+    public int[][] getBoardHeuristic() {
+        return BishopBoardHeuristic;
+    }
+
+
     public String toString() {
         if (isWhite) {
             return "B";

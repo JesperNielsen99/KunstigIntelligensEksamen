@@ -40,6 +40,10 @@ public class Queen extends Piece{
         return queenValue + boardHeuristicValue;
     }
 
+    @Override
+    public int[][] getBoardHeuristic() {
+        return queenBoardHeuristic;
+    }
 
     public String toString() {
         if (isWhite) {

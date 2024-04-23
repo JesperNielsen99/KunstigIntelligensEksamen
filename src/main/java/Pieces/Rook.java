@@ -41,6 +41,11 @@ public class Rook extends Piece {
         return rookValue + boardHeuristicValue;
     }
 
+    @Override
+    public int[][] getBoardHeuristic() {
+        return rookBoardHeuristic;
+    }
+
     public String toString() {
         if (isWhite) {
             return "R";

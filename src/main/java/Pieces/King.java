@@ -74,6 +74,10 @@ public class King extends Piece {
 //        return kingValue + boardHeuristicValue;
 //    }
 
+    @Override
+    public int[][] getBoardHeuristic() {
+        return KingBoardHeuristicMiddleGame;
+    }
 
     public String toString() {
         if (isWhite) {
