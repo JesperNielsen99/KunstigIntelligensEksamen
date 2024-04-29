@@ -326,7 +326,10 @@ public class Move {
             System.out.println("Move: " + move.get(0) + ", " + move.get(1));
             int newMoveX = move.get(0);
             int newMoveY = move.get(1);
-            if (board.getBoard().get(newMoveX).get(newMoveY) == null) {
+            ArrayList<Integer> nextMove = new ArrayList<>();
+            nextMove.add(newMoveX);
+            nextMove.add(newMoveY);
+            if (isNotOutOfBounds(nextMove) && board.getBoard().get(newMoveX).get(newMoveY) == null) {
                 board.getBoard().get(newMoveX).set(newMoveY, piece);
                 piece.currentXPosition = newMoveY;
                 piece.currentYPosition = newMoveY;
@@ -348,6 +351,8 @@ public class Move {
                 board.getBoard().get(newMoveX).set(newMoveY, null);
                 piece.currentXPosition = x;
                 piece.currentYPosition = y;
+            } else {
+                isCheckedAfterMove.add(true);
             }
         } else {
             piece.currentXPosition = move.get(0);

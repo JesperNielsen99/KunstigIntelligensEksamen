@@ -24,12 +24,14 @@ public class Board {
         }
 
         // Setup Pawns
+        /*
         for (int i = 0; i < 8; i++) {
             // Assuming black is at the top (0) and white at the bottom (7)
             // Adjust if your board orientation is different
             board.get(1).set(i, new Pawn(true, 1, i)); // White Pawns
             board.get(6).set(i, new Pawn(false, 6, i)); // Black Pawns
         }
+        */
 
 
 
@@ -57,8 +59,8 @@ public class Board {
         board.get(7).set(6, new Knight(false, 7, 6)); // Black
 
         //Setup King
-        board.get(0).set(4, new King(true, 0, 4)); // White
-        //board.get(1).set(3, new King(true, 1, 3)); //White
+        //board.get(0).set(4, new King(true, 0, 4)); // White
+        board.get(1).set(3, new King(true, 1, 3)); //White
         board.get(7).set(4, new King(false, 7, 4)); // Black
         fillColorArrays();
     }
@@ -117,7 +119,7 @@ public class Board {
                     boardString += " |";
                 } else {
                     boardString += board.get(8-i-1).get(j).toString() + "|";
-                }
+                    }
             }
             boardString += "\n------------------\n";
         }
