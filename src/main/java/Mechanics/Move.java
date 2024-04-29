@@ -3,7 +3,6 @@ package Mechanics;
 import Board.Board;
 import Pieces.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -212,21 +211,6 @@ public class Move {
                         piece.currentYPosition = y;
                     }
                 }
-            } else {
-                for (ArrayList<Integer> direction : piece.directions) {
-                    int x = piece.currentXPosition;
-                    int y = piece.currentYPosition;
-                    int nextX = x + direction.get(0);
-                    int nextY = y + direction.get(1);
-
-                    ArrayList<Integer> move = new ArrayList<>();
-                    move.add(nextX);
-                    move.add(nextY);
-
-                    if (!isCheckedAfterMove(board, piece, move).get(0)) {
-                        legalMoves.add(move);
-                    }
-                }
             }
         } else {
             if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class || piece.getClass() == Queen.class) {
@@ -405,81 +389,64 @@ public class Move {
         return legalMoveCanMoveAfter;
     }
 
-    public void movePiece(Board board, boolean isWhite) {
-        //boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
-        //if (isKingInCheck) {}
-        //STOP CHECK
-        //CASTLE, Ensure not in check.
-        System.out.println(board);
-        System.out.println("Which piece would you like to move?");
-        System.out.println("Enter the chess positions (e.g., a2 a4):");
+    public boolean isGameOver(Board board) {
+        boolean isGameOver = true;
+        // Check if the white king is in checkmate
+        if (isInCheckmate(board, true)) {
+            return true;
+        }
 
-        int[] coordinates = inputScanner1();
+        // Check if the black king is in checkmate
+        if (isInCheckmate(board, false)) {
+            return true;
+        }
 
-        int oldX = coordinates[0];
-        int newX = coordinates[2];
-        int oldY = coordinates[1];
-        int newY = coordinates[3];
+        // Check if stalemate
+        if (isStalemate(board)) {
+            return true;
+        }
 
-        Piece piece = board.getBoard().get(oldX).get(oldY);
-        if (piece != null && piece.isWhite == isWhite) {
-            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, isWhite);
+        // If none of the above conditions are met, the game is not over
+        return false;
+    }
+
+    // Method to check if a particular isWhite's king is in checkmate
+    private boolean isInCheckmate(Board board, boolean isWhite) {
+        ArrayList<Piece> pieces = new ArrayList<>();
+        if (isWhite) {
+            pieces = board.getWhitePieces();
+        } else {
+            pieces = board.getBlackPieces();
+        }
+        for (Piece piece : pieces) {
+            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
             if (!legalMoves.isEmpty()) {
-                ArrayList<Integer> move = new ArrayList<>();
-                move.add(newX);
-                move.add(newY);
-                if (legalMoves.contains(move)) {
-                    board.getBoard().get(oldX).set(oldY, null);
-                    piece.currentXPosition = newX;
-                    piece.currentYPosition = newY;
-                    board.getBoard().get(newX).set(newY, piece);
-                    piece.isFirstMove = false;
-                } else {
-                    System.out.println("Illegal move. Please Select a new move.");
-                    movePiece(board, isWhite);
-                }
-            } else {
-                System.out.println("No Legal moves. Please Select a new move.");
-                movePiece(board, isWhite);
+                return false; // There exists at least one legal move, so not in checkmate
             }
-        } else if (piece == null) {
-            System.out.println("That space is blank. Please Select a new move.");
-            movePiece(board, isWhite);
-        } else {
-            System.out.println("Move your own piece. Please Select a new move.");
-            movePiece(board, isWhite);
         }
+        // No legal moves for any piece of the specified isWhite, so in checkmate
+        return true;
     }
 
-    /*
+    // Method to check for stalemate
+    private boolean isStalemate(Board board) {
+        ArrayList<Piece> pieces = new ArrayList<>();
+        if (board.getPlayer() == true){
+            pieces.addAll(board.getWhitePieces());
+        } else {
+            pieces.addAll(board.getBlackPieces());
+        }
+        for (Piece piece : pieces) {
+            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
+            if (!legalMoves.isEmpty()) {
+                return false; // There exists at least one legal move, so not stalemate
+            }
+        }
+        // No legal moves for any piece of the current player, so stalemate
+        return true;
+    }
+
     public int[] inputScanner() {
-        int[] coordinates = new int[4];
-
-        String input = scanner.nextLine();
-
-        String[] positions = input.split(" ");
-        if (positions.length == 2) {
-            for (String position : positions) {
-                int file = position.charAt(0) - 'a'; // Convert letter to corresponding array index
-                int rank = Character.getNumericValue(position.charAt(1)) - 1; // Convert number to corresponding array index
-                if (position == positions[0]) {
-                    coordinates[0] = rank;
-                    coordinates[1] = file;
-                } else {
-                    coordinates[2] = rank;
-                    coordinates[3] = file;
-                }
-            }
-        } else {
-            System.out.println("Wrong amount of inputs.");
-            System.out.println("Enter the chess positions (e.g., a3 a5):");
-            inputScanner();
-        }
-        return coordinates;
-    }
-    */
-
-    public int[] inputScanner1() {
         int[] coordinates = new int[4];
         coordinates[2] = -1;
 
@@ -510,12 +477,12 @@ public class Move {
         } else {
             System.out.println("Wrong amount of inputs.");
             System.out.println("Enter the chess positions (e.g., a3 a5):");
-            inputScanner1();
+            inputScanner();
         }
         return coordinates;
     }
 
-    public void movePiece1(Board board, boolean isWhite) {
+    public void takeTurn(Board board, boolean isWhite) {
 
         boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
         System.out.println(isKingInCheck);
@@ -526,7 +493,7 @@ public class Move {
         System.out.println("Which piece would you like to move?");
         System.out.println("Enter the chess positions (e.g., A3 A5):");
 
-        int[] coordinates = inputScanner1();
+        int[] coordinates = inputScanner();
 
         int oldX = coordinates[0];
         int oldY = coordinates[1];
@@ -547,32 +514,38 @@ public class Move {
                     move.add(newX);
                     move.add(newY);
                     if (legalMoves.contains(move)) {
-                        board.getBoard().get(oldX).set(oldY, null);
-                        piece.currentXPosition = newX;
-                        piece.currentYPosition = newY;
-                        board.getBoard().get(newX).set(newY, piece);
-                        piece.isFirstMove = false;
+                        movePiece(board, piece, move);
+                        System.out.println("Turn ended!");
                     } else {
                         System.out.println("Illegal move. Please Select a new move.");
-                        movePiece(board, isWhite);
+                        takeTurn(board, isWhite);
                     }
                 } else {
                     System.out.println("No Legal moves. Please Select a new move.");
-                    movePiece(board, isWhite);
+                    takeTurn(board, isWhite);
                 }
             } else {
                 for (ArrayList<Integer> move : legalMoves) {
                     System.out.print("[" + (char) (move.get(1) + 'a') + (move.get(0) + 1) + "]");
                 }
                 System.out.println("\n");
-                movePiece(board, isWhite);
+                takeTurn(board, isWhite);
             }
         } else if (piece == null) {
             System.out.println("That space is blank. Please Select a new move.");
-            movePiece(board, isWhite);
+            takeTurn(board, isWhite);
         } else {
             System.out.println("Move your own piece. Please Select a new move.");
-            movePiece(board, isWhite);
+            takeTurn(board, isWhite);
         }
+    }
+
+    public void movePiece(Board board, Piece piece, ArrayList<Integer> move) {
+        board.getBoard().get(piece.currentXPosition).set(piece.currentYPosition, null);
+        piece.currentXPosition = move.get(0);
+        piece.currentYPosition = move.get(1);
+        board.getBoard().get(move.get(0)).set(move.get(1), piece);
+        piece.isFirstMove = false;
+        board.changeTurns();
     }
 }
