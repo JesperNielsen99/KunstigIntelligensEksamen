@@ -7,10 +7,18 @@ import java.util.ArrayList;
 public class Board {
 
     ArrayList<ArrayList<Piece>> board = new ArrayList<>();
-    ArrayList<Piece> blackPieces = new ArrayList<>();
     ArrayList<Piece> whitePieces = new ArrayList<>();
+    ArrayList<Piece> blackPieces = new ArrayList<>();
+    boolean whitePlayer = true;
 
     public Board() {
+    }
+
+    public Board(Board board) {
+        this.board = board.getBoard();
+        this.whitePieces = board.getWhitePieces();
+        this.blackPieces = board.getBlackPieces();
+        this.whitePlayer = board.getPlayer();
     }
 
     public void initializeBoard() {
@@ -30,7 +38,6 @@ public class Board {
             board.get(1).set(i, new Pawn(true, 1, i)); // White Pawns
             board.get(6).set(i, new Pawn(false, 6, i)); // Black Pawns
         }
-
 
 
 
@@ -59,7 +66,6 @@ public class Board {
 
         //Setup King
         board.get(0).set(4, new King(true, 0, 4)); // White
-        //board.get(1).set(3, new King(true, 1, 3)); //White
         board.get(7).set(4, new King(false, 7, 4)); // Black
         fillColorArrays();
     }
@@ -91,6 +97,14 @@ public class Board {
             }
         }
         return null;
+    }
+
+    public void changeTurns() {
+        whitePlayer = !whitePlayer;
+    }
+
+    public boolean getPlayer() {
+        return whitePlayer;
     }
 
     //public void updatePiece() {}

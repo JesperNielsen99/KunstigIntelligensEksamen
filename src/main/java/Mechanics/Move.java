@@ -3,7 +3,6 @@ package Mechanics;
 import Board.Board;
 import Pieces.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -212,21 +211,6 @@ public class Move {
                         piece.currentYPosition = y;
                     }
                 }
-            } else {
-                for (ArrayList<Integer> direction : piece.directions) {
-                    int x = piece.currentXPosition;
-                    int y = piece.currentYPosition;
-                    int nextX = x + direction.get(0);
-                    int nextY = y + direction.get(1);
-
-                    ArrayList<Integer> move = new ArrayList<>();
-                    move.add(nextX);
-                    move.add(nextY);
-
-                    if (!isCheckedAfterMove(board, piece, move).get(0)) {
-                        legalMoves.add(move);
-                    }
-                }
             }
         } else {
             if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class || piece.getClass() == Queen.class) {
@@ -405,6 +389,63 @@ public class Move {
         return legalMoveCanMoveAfter;
     }
 
+    public boolean isGameOver(Board board) {
+        boolean isGameOver = true;
+        // Check if the white king is in checkmate
+        if (isInCheckmate(board, true)) {
+            return true;
+        }
+
+        // Check if the black king is in checkmate
+        if (isInCheckmate(board, false)) {
+            return true;
+        }
+
+        // Check if stalemate
+        if (isStalemate(board)) {
+            return true;
+        }
+
+        // If none of the above conditions are met, the game is not over
+        return false;
+    }
+
+    // Method to check if a particular isWhite's king is in checkmate
+    private boolean isInCheckmate(Board board, boolean isWhite) {
+        ArrayList<Piece> pieces = new ArrayList<>();
+        if (isWhite) {
+            pieces = board.getWhitePieces();
+        } else {
+            pieces = board.getBlackPieces();
+        }
+        for (Piece piece : pieces) {
+            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
+            if (!legalMoves.isEmpty()) {
+                return false; // There exists at least one legal move, so not in checkmate
+            }
+        }
+        // No legal moves for any piece of the specified isWhite, so in checkmate
+        return true;
+    }
+
+    // Method to check for stalemate
+    private boolean isStalemate(Board board) {
+        ArrayList<Piece> pieces = new ArrayList<>();
+        if (board.getPlayer() == true){
+            pieces.addAll(board.getWhitePieces());
+        } else {
+            pieces.addAll(board.getBlackPieces());
+        }
+        for (Piece piece : pieces) {
+            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
+            if (!legalMoves.isEmpty()) {
+                return false; // There exists at least one legal move, so not stalemate
+            }
+        }
+        // No legal moves for any piece of the current player, so stalemate
+        return true;
+    }
+
     public int[] inputScanner() {
         int[] coordinates = new int[4];
         coordinates[2] = -1;
@@ -441,7 +482,7 @@ public class Move {
         return coordinates;
     }
 
-    public void movePiece(Board board, boolean isWhite) {
+    public void takeTurn(Board board, boolean isWhite) {
 
         boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
         System.out.println(isKingInCheck);
@@ -473,51 +514,38 @@ public class Move {
                     move.add(newX);
                     move.add(newY);
                     if (legalMoves.contains(move)) {
-                        board.getBoard().get(oldX).set(oldY, null);
-                        piece.currentXPosition = newX;
-                        piece.currentYPosition = newY;
-                        board.getBoard().get(newX).set(newY, piece);
-                        piece.isFirstMove = false;
-                        if (piece.getClass() == Pawn.class && ((piece.isWhite && newX == 7) || (!piece.isWhite && newX == 0))) {
-                            promotePawn(board, piece, newX, newY);
-                        }
+                        movePiece(board, piece, move);
+                        System.out.println("Turn ended!");
                     } else {
                         System.out.println("Illegal move. Please Select a new move.");
-                        movePiece(board, isWhite);
+                        takeTurn(board, isWhite);
                     }
                 } else {
                     System.out.println("No Legal moves. Please Select a new move.");
-                    movePiece(board, isWhite);
+                    takeTurn(board, isWhite);
                 }
             } else {
                 for (ArrayList<Integer> move : legalMoves) {
                     System.out.print("[" + (char) (move.get(1) + 'a') + (move.get(0) + 1) + "]");
                 }
                 System.out.println("\n");
-                movePiece(board, isWhite);
+                takeTurn(board, isWhite);
             }
         } else if (piece == null) {
             System.out.println("That space is blank. Please Select a new move.");
-            movePiece(board, isWhite);
+            takeTurn(board, isWhite);
         } else {
             System.out.println("Move your own piece. Please Select a new move.");
-            movePiece(board, isWhite);
+            takeTurn(board, isWhite);
         }
     }
 
-    public void promotePawn(Board board, Piece pawn, int x, int y) {
-        if (pawn.getClass() == Pawn.class && (x == 7 || x == 0)) {
-            Queen newQueen = new Queen(pawn.isWhite, y, x);
-            board.getBoard().get(y).set(x, newQueen);
-            if (pawn.isWhite) {
-                board.getWhitePieces().remove(pawn);
-                board.getWhitePieces().add(newQueen);
-            } else {
-                board.getBlackPieces().remove(pawn);
-                board.getBlackPieces().add(newQueen);
-            }
-            board.getBoard().get(x).set(y, newQueen);
-            System.out.println("Pawn has been promoted to a Queen!");
-        }
+    public void movePiece(Board board, Piece piece, ArrayList<Integer> move) {
+        board.getBoard().get(piece.currentXPosition).set(piece.currentYPosition, null);
+        piece.currentXPosition = move.get(0);
+        piece.currentYPosition = move.get(1);
+        board.getBoard().get(move.get(0)).set(move.get(1), piece);
+        piece.isFirstMove = false;
+        board.changeTurns();
     }
 }
