@@ -33,6 +33,7 @@ public class Move {
     public ArrayList<Piece> isKingInCheck(Board board, Piece piece) {
         ArrayList<Piece> piecesCheckingKing = new ArrayList<>();
         Piece king = board.findKing(piece.isWhite);
+
         // Find the king's position
         ArrayList<Integer> kingPosition = new ArrayList<>();
         kingPosition.add(king.currentXPosition);
@@ -55,29 +56,6 @@ public class Move {
             }
         }
         return piecesCheckingKing;
-    }
-
-    public ArrayList<Piece> isTakable(Board board, Piece piece) {
-        ArrayList<Piece> piecesCapableOfTaking = new ArrayList<>();
-        ArrayList<Integer> piecePosition = new ArrayList<>();
-        piecePosition.add(piece.currentXPosition);
-        piecePosition.add(piece.currentYPosition);
-
-        // Check if any opponent's pieces threaten the king
-        ArrayList<Piece> pieces;
-        if (!piece.isWhite) {
-            pieces = board.getWhitePieces();
-        } else {
-            pieces = board.getBlackPieces();
-        }
-
-        for (Piece pieceOnBoard : pieces) {
-            ArrayList<ArrayList<Integer>> pieceList = getLegalMoves(board, pieceOnBoard, true);
-            if (pieceList.contains(piecePosition)) { // If the piece can attack the king
-                piecesCapableOfTaking.add(pieceOnBoard);
-            }
-        }
-        return piecesCapableOfTaking;
     }
 
     public ArrayList<ArrayList<Integer>> getLegalMoves(Board board, Piece piece, boolean checkIfKingIsCheck) {
@@ -172,8 +150,6 @@ public class Move {
                     }
                 }
             } else if (piecesCheckingKing.size() == 1) { ///////////////////////////////////////////////////////////////////////////
-
-                /////CAN MOVE while in check!!!
                 if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class || piece.getClass() == Queen.class) {
                     for (ArrayList<Integer> direction : piece.directions) {
                         int x = piece.currentXPosition;
@@ -205,7 +181,6 @@ public class Move {
                                 } else {
                                     x = nextX;
                                     y = nextY;
-
                                 }
                             } else {
                                 x = nextX;
@@ -348,10 +323,16 @@ public class Move {
         int x = piece.currentXPosition;
         int y = piece.currentYPosition;
         if (piece.getClass() == Pawn.class || piece.getClass() == Rook.class || piece.getClass() == Bishop.class || piece.getClass() == Queen.class) {
-            if (board.getBoard().get(move.get(0)).get(move.get(1)) == null) {
-                board.getBoard().get(move.get(0)).set(move.get(1), piece);
-                piece.currentXPosition = move.get(0);
-                piece.currentYPosition = move.get(1);
+            System.out.println("Move: " + move.get(0) + ", " + move.get(1));
+            int newMoveX = move.get(0);
+            int newMoveY = move.get(1);
+            ArrayList<Integer> nextMove = new ArrayList<>();
+            nextMove.add(newMoveX);
+            nextMove.add(newMoveY);
+            if (isNotOutOfBounds(nextMove) && board.getBoard().get(newMoveX).get(newMoveY) == null) {
+                board.getBoard().get(newMoveX).set(newMoveY, piece);
+                piece.currentXPosition = newMoveY;
+                piece.currentYPosition = newMoveY;
                 isKingInCheck = isKingInCheck(board, piece);
                 if (isKingInCheck.isEmpty()) {
                     if (legalMoveOrNot.get(0)) {
@@ -367,9 +348,11 @@ public class Move {
                 } else {
                     isCheckedAfterMove.add(true);
                 }
-                board.getBoard().get(move.get(0)).set(move.get(1), null);
+                board.getBoard().get(newMoveX).set(newMoveY, null);
                 piece.currentXPosition = x;
                 piece.currentYPosition = y;
+            } else {
+                isCheckedAfterMove.add(true);
             }
         } else {
             piece.currentXPosition = move.get(0);
@@ -423,15 +406,15 @@ public class Move {
     }
 
     public void movePiece(Board board, boolean isWhite) {
-        boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
+        //boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
         //if (isKingInCheck) {}
         //STOP CHECK
         //CASTLE, Ensure not in check.
         System.out.println(board);
         System.out.println("Which piece would you like to move?");
-        System.out.println("Enter the chess positions (e.g., A3 A5):");
+        System.out.println("Enter the chess positions (e.g., a2 a4):");
 
-        int[] coordinates = inputScanner();
+        int[] coordinates = inputScanner1();
 
         int oldX = coordinates[0];
         int newX = coordinates[2];
@@ -479,6 +462,7 @@ public class Move {
         }
     }
 
+    /*
     public int[] inputScanner() {
         int[] coordinates = new int[4];
 
@@ -504,6 +488,7 @@ public class Move {
         }
         return coordinates;
     }
+    */
 
     public int[] inputScanner1() {
         int[] coordinates = new int[4];
@@ -536,7 +521,7 @@ public class Move {
         } else {
             System.out.println("Wrong amount of inputs.");
             System.out.println("Enter the chess positions (e.g., a3 a5):");
-            inputScanner();
+            inputScanner1();
         }
         return coordinates;
     }
