@@ -6,7 +6,6 @@ import AI.AI;
 public class Game {
     static Move move;
     static Board board;
-    static Piece piece;
     static AI ai;
 
     public static void main(String[] args) {
@@ -19,8 +18,13 @@ public class Game {
 
     public static void run() {
         while (true) {
-            move.takeTurn(board, board.getPlayer());
-            ai.aiMove(board);
+            if (!ai.isWhite) {
+                move.takeTurn(board, board.getPlayer());
+                ai.aiMove(board);
+            } else {
+                ai.aiMove(board);
+                move.takeTurn(board, board.getPlayer());
+            }
 
             Piece.printHeuristicValues(board);
         }

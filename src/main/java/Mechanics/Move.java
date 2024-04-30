@@ -121,7 +121,7 @@ public class Move {
                                     move.add(nextY);
 
                                     isCheckedAfterMove = isCheckedAfterMove(board, piece, move);
-                                    if (!isCheckedAfterMove.get(1)) {
+                                    if (isCheckedAfterMove.size() > 1 && !isCheckedAfterMove.get(1)) {
                                         legalMoves.add(move);
                                     }
                                 }
@@ -307,7 +307,7 @@ public class Move {
         int x = piece.currentXPosition;
         int y = piece.currentYPosition;
         if (piece.getClass() == Pawn.class || piece.getClass() == Rook.class || piece.getClass() == Bishop.class || piece.getClass() == Queen.class) {
-            System.out.println("Move: " + move.get(0) + ", " + move.get(1));
+            System.out.println("Move: " + piece + ": " + move.get(0) + ", " + move.get(1));
             int newMoveX = move.get(0);
             int newMoveY = move.get(1);
             ArrayList<Integer> nextMove = new ArrayList<>();
@@ -541,10 +541,12 @@ public class Move {
     }
 
     public void movePiece(Board board, Piece piece, ArrayList<Integer> move) {
-        board.getBoard().get(piece.currentXPosition).set(piece.currentYPosition, null);
+        int currentX = piece.currentXPosition;
+        int currentY = piece.currentYPosition;
         piece.currentXPosition = move.get(0);
         piece.currentYPosition = move.get(1);
         board.getBoard().get(move.get(0)).set(move.get(1), piece);
+        board.getBoard().get(currentX).set(currentY, null);
         piece.isFirstMove = false;
         board.changeTurns();
     }

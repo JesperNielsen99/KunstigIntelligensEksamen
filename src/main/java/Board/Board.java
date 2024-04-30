@@ -15,14 +15,19 @@ public class Board {
     }
 
     public Board(Board board) {
-        this.board = board.getBoard();
-        this.whitePieces = board.getWhitePieces();
-        this.blackPieces = board.getBlackPieces();
+        for (int i = 0; i < board.getBoard().size(); i++) {
+            ArrayList<Piece> newRow = new ArrayList<>(); // Create a new row for this.board
+            for (int j = 0; j < board.getBoard().get(i).size(); j++) {
+                Piece piece = board.getBoard().get(i).get(j);
+                newRow.add(piece); // Add each piece from the original board to the new row
+            }
+            this.board.add(newRow); // Add the new row to this.board
+        }
+        fillColorArrays();
         this.whitePlayer = board.getPlayer();
     }
 
     public void initializeBoard() {
-
         for (int i = 0; i < 8; i++) {
             ArrayList<Piece> row = new ArrayList<>();
             for (int j = 0; j < 8; j++) {
