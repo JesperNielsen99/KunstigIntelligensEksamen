@@ -471,9 +471,9 @@ public class Move {
         }
     }
 
-    public void promotePawn(Board board, Piece pawn, int x, int y) {
-        if (pawn.getClass() == Pawn.class && (y == 7 || y == 0)) {
-            Queen newQueen = new Queen(pawn.isWhite, x, y);
+    public void promotePawn(Board board, Piece piece, int x, int y) {
+        if (piece.getClass() == Pawn.class && (y == 7 || y == 0)) {
+            Queen newQueen = new Queen(piece.isWhite, x, y);
             board.getBoard().get(x).set(y, newQueen);
             System.out.println("Pawn has been promoted to a Queen!");
         }
