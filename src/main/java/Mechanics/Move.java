@@ -545,6 +545,7 @@ public class Move {
         int currentY = piece.currentYPosition;
         piece.currentXPosition = move.get(0);
         piece.currentYPosition = move.get(1);
+
         board.getBoard().get(move.get(0)).set(move.get(1), piece);
         board.getBoard().get(currentX).set(currentY, null);
         piece.isFirstMove = false;
