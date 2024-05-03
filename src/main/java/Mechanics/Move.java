@@ -340,7 +340,6 @@ public class Move {
                             castleWhiteLong(board);
                         }
                     }
-
                     if (isCastleMove(piece, new ArrayList<>(Arrays.asList(newX, newY))) && !piece.isWhite){
                         if (newX > oldX) {
                             castleBlackShort(board);
