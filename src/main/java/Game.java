@@ -23,12 +23,12 @@ public class Game {
 
 
 
-            move.movePiece1(board, true);
+            move.movePiece(board, true);
             //AI do black stuff
             //AI.move(board, false);
 
             Piece.printHeuristicValues(board);
-            move.movePiece1(board, false);
+            move.movePiece(board, false);
         }
     }
 

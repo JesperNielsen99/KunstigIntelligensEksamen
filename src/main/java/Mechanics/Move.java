@@ -134,7 +134,18 @@ public class Move {
                             }
                         }
                     }
-                } else {
+//                }
+//                else if (piece.getClass() == King.class) {
+//                    for (ArrayList<Integer> direction : piece.directions) {
+//                        int x = piece.currentXPosition;
+//                        int y = piece.currentYPosition;
+//                        int nextX = x + direction.get(0);
+//                        int nextY = y + direction.get(1);
+//
+//                        ArrayList<Integer> move = new ArrayList<>();
+//
+//                    }
+                }else {
                     for (ArrayList<Integer> direction : piece.directions) {
                         int x = piece.currentXPosition;
                         int y = piece.currentYPosition;
@@ -376,6 +387,7 @@ public class Move {
 
     public ArrayList<Boolean> isLegalMove(Board board, ArrayList<Integer> move, boolean isWhite) {
         ArrayList<Boolean> legalMoveCanMoveAfter = new ArrayList<>();
+        //Piece pieceToMove = board.
         if (isNotOutOfBounds(move)) {
             if (!isOccupied(board, move)) {
                 boolean legalMove = true;
@@ -424,12 +436,12 @@ public class Move {
     }
 
     public boolean isCastleMove(Piece piece, ArrayList<Integer> coord){
-        if (piece.getClass() == King.class && piece.isWhite) {
+        if (piece.getClass() == King.class && piece.isWhite && piece.isFirstMove) {
             return coord.equals(new ArrayList<>(Arrays.asList(6, 0)))
                     || coord.equals(new ArrayList<>(Arrays.asList(2, 0)));
         }
 
-        if (piece.getClass() == King.class && !piece.isWhite) {
+        if (piece.getClass() == King.class && !piece.isWhite && piece.isFirstMove) {
             return coord.equals(new ArrayList<>(Arrays.asList(2, 7)))
                     || coord.equals(new ArrayList<>(Arrays.asList(6, 7)));
         }
@@ -460,66 +472,67 @@ public class Move {
         board.getBoard().get(5).set(7, rook);
     }
 
-    public void movePiece(Board board, boolean isWhite) {
-        //boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
-        //if (isKingInCheck) {}
-        //STOP CHECK
-        //CASTLE, Ensure not in check.
-        System.out.println(board);
-        System.out.println("Which piece would you like to move?");
-        System.out.println("Enter the chess positions (e.g., a2 a4):");
-
-        int[] coordinates = inputScanner1();
-
-        int oldX = coordinates[0];
-        int newX = coordinates[2];
-        int oldY = coordinates[1];
-        int newY = coordinates[3];
-
-        Piece piece = board.getBoard().get(oldX).get(oldY);
-        if (piece != null && piece.isWhite == isWhite) {
-            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, isWhite);
-            if (!legalMoves.isEmpty()) {
-                ArrayList<Integer> move = new ArrayList<>();
-                move.add(newX);
-                move.add(newY);
-                if (legalMoves.contains(move)) {
-                    if (isCastleMove(piece, new ArrayList<>(Arrays.asList(newX, newY))) && piece.isWhite){
-                        if (newX > oldX){
-                            castleWhiteShort(board);
-                        } else {
-                            castleWhiteLong(board);
-                        }
-                    }
-                    if (isCastleMove(piece, new ArrayList<>(Arrays.asList(newX, newY))) && !piece.isWhite){
-                        if (newX > oldX) {
-                            castleBlackShort(board);
-                        } else {
-                            castleBlackLong(board);
-                        }
-                    }
-
-                    board.getBoard().get(oldX).set(oldY, null);
-                    piece.currentXPosition = newX;
-                    piece.currentYPosition = newY;
-                    board.getBoard().get(newX).set(newY, piece);
-                    piece.isFirstMove = false;
-                } else {
-                    System.out.println("Illegal move. Please Select a new move.");
-                    movePiece(board, isWhite);
-                }
-            } else {
-                System.out.println("No Legal moves. Please Select a new move.");
-                movePiece(board, isWhite);
-            }
-        } else if (piece == null) {
-            System.out.println("That space is blank. Please Select a new move.");
-            movePiece(board, isWhite);
-        } else {
-            System.out.println("Move your own piece. Please Select a new move.");
-            movePiece(board, isWhite);
-        }
-    }
+//
+//    public void testMovePiece(Board board, boolean isWhite) {
+//        //boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
+//        //if (isKingInCheck) {}
+//        //STOP CHECK
+//        //CASTLE, Ensure not in check.
+//        System.out.println(board);
+//        System.out.println("Which piece would you like to move?");
+//        System.out.println("Enter the chess positions (e.g., a2 a4):");
+//
+//        int[] coordinates = inputScanner1();
+//
+//        int oldX = coordinates[0];
+//        int newX = coordinates[2];
+//        int oldY = coordinates[1];
+//        int newY = coordinates[3];
+//
+//        Piece piece = board.getBoard().get(oldX).get(oldY);
+//        if (piece != null && piece.isWhite == isWhite) {
+//            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, isWhite);
+//            if (!legalMoves.isEmpty()) {
+//                ArrayList<Integer> move = new ArrayList<>();
+//                move.add(newX);
+//                move.add(newY);
+//                if (legalMoves.contains(move)) {
+//                    if (isCastleMove(piece, new ArrayList<>(Arrays.asList(newX, newY))) && piece.isWhite){
+//                        if (newX > oldX){
+//                            castleWhiteShort(board);
+//                        } else {
+//                            castleWhiteLong(board);
+//                        }
+//                    }
+//                    if (isCastleMove(piece, new ArrayList<>(Arrays.asList(newX, newY))) && !piece.isWhite){
+//                        if (newX > oldX) {
+//                            castleBlackShort(board);
+//                        } else {
+//                            castleBlackLong(board);
+//                        }
+//                    }
+//
+//                    board.getBoard().get(oldX).set(oldY, null);
+//                    piece.currentXPosition = newX;
+//                    piece.currentYPosition = newY;
+//                    board.getBoard().get(newX).set(newY, piece);
+//                    piece.isFirstMove = false;
+//                } else {
+//                    System.out.println("Illegal move. Please Select a new move.");
+//                    movePiece(board, isWhite);
+//                }
+//            } else {
+//                System.out.println("No Legal moves. Please Select a new move.");
+//                movePiece(board, isWhite);
+//            }
+//        } else if (piece == null) {
+//            System.out.println("That space is blank. Please Select a new move.");
+//            movePiece(board, isWhite);
+//        } else {
+//            System.out.println("Move your own piece. Please Select a new move.");
+//            movePiece(board, isWhite);
+//        }
+//    }
 
     /*
     public int[] inputScanner() {
@@ -553,7 +566,7 @@ public class Move {
         int[] coordinates = new int[4];
         coordinates[2] = -1;
 
-        String input = scanner.nextLine();
+        String input = scanner.nextLine().toLowerCase();
 
         String[] positions = input.split(" ");
         if (positions.length == 2) {
@@ -585,7 +598,7 @@ public class Move {
         return coordinates;
     }
 
-    public void movePiece1(Board board, boolean isWhite) {
+    public void movePiece(Board board, boolean isWhite) {
 
         boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
         System.out.println(isKingInCheck);
@@ -617,6 +630,22 @@ public class Move {
                     move.add(newX);
                     move.add(newY);
                     if (legalMoves.contains(move)) {
+                        //Implement castling
+                        if (isCastleMove(piece, new ArrayList<>(Arrays.asList(newX, newY))) && piece.isWhite){
+                        if (newY > oldY){
+                            castleWhiteShort(board);
+                        } else {
+                            castleWhiteLong(board);
+                        }
+                    }
+                    if (isCastleMove(piece, new ArrayList<>(Arrays.asList(newX, newY))) && !piece.isWhite){
+                        if (newY > oldY) {
+                            castleBlackShort(board);
+                        } else {
+                            castleBlackLong(board);
+                        }
+                    }
+
                         board.getBoard().get(oldX).set(oldY, null);
                         piece.currentXPosition = newX;
                         piece.currentYPosition = newY;
