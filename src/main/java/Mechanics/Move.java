@@ -405,81 +405,7 @@ public class Move {
         return legalMoveCanMoveAfter;
     }
 
-    public void movePiece(Board board, boolean isWhite) {
-        //boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
-        //if (isKingInCheck) {}
-        //STOP CHECK
-        //CASTLE, Ensure not in check.
-        System.out.println(board);
-        System.out.println("Which piece would you like to move?");
-        System.out.println("Enter the chess positions (e.g., a2 a4):");
-
-        int[] coordinates = inputScanner1();
-
-        int oldX = coordinates[0];
-        int newX = coordinates[2];
-        int oldY = coordinates[1];
-        int newY = coordinates[3];
-
-        Piece piece = board.getBoard().get(oldX).get(oldY);
-        if (piece != null && piece.isWhite == isWhite) {
-            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, isWhite);
-            if (!legalMoves.isEmpty()) {
-                ArrayList<Integer> move = new ArrayList<>();
-                move.add(newX);
-                move.add(newY);
-                if (legalMoves.contains(move)) {
-                    board.getBoard().get(oldX).set(oldY, null);
-                    piece.currentXPosition = newX;
-                    piece.currentYPosition = newY;
-                    board.getBoard().get(newX).set(newY, piece);
-                    piece.isFirstMove = false;
-                } else {
-                    System.out.println("Illegal move. Please Select a new move.");
-                    movePiece(board, isWhite);
-                }
-            } else {
-                System.out.println("No Legal moves. Please Select a new move.");
-                movePiece(board, isWhite);
-            }
-        } else if (piece == null) {
-            System.out.println("That space is blank. Please Select a new move.");
-            movePiece(board, isWhite);
-        } else {
-            System.out.println("Move your own piece. Please Select a new move.");
-            movePiece(board, isWhite);
-        }
-    }
-
-    /*
     public int[] inputScanner() {
-        int[] coordinates = new int[4];
-
-        String input = scanner.nextLine();
-
-        String[] positions = input.split(" ");
-        if (positions.length == 2) {
-            for (String position : positions) {
-                int file = position.charAt(0) - 'a'; // Convert letter to corresponding array index
-                int rank = Character.getNumericValue(position.charAt(1)) - 1; // Convert number to corresponding array index
-                if (position == positions[0]) {
-                    coordinates[0] = rank;
-                    coordinates[1] = file;
-                } else {
-                    coordinates[2] = rank;
-                    coordinates[3] = file;
-                }
-            }
-        } else {
-            System.out.println("Wrong amount of inputs.");
-            System.out.println("Enter the chess positions (e.g., a3 a5):");
-            inputScanner();
-        }
-        return coordinates;
-    }
-    */
-
-    public int[] inputScanner1() {
         int[] coordinates = new int[4];
         coordinates[2] = -1;
 
@@ -510,12 +436,12 @@ public class Move {
         } else {
             System.out.println("Wrong amount of inputs.");
             System.out.println("Enter the chess positions (e.g., a3 a5):");
-            inputScanner1();
+            inputScanner();
         }
         return coordinates;
     }
 
-    public void movePiece1(Board board, boolean isWhite) {
+    public void movePiece(Board board, boolean isWhite) {
 
         boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
         System.out.println(isKingInCheck);
@@ -526,7 +452,7 @@ public class Move {
         System.out.println("Which piece would you like to move?");
         System.out.println("Enter the chess positions (e.g., A3 A5):");
 
-        int[] coordinates = inputScanner1();
+        int[] coordinates = inputScanner();
 
         int oldX = coordinates[0];
         int oldY = coordinates[1];
@@ -552,6 +478,9 @@ public class Move {
                         piece.currentYPosition = newY;
                         board.getBoard().get(newX).set(newY, piece);
                         piece.isFirstMove = false;
+                        if (piece.getClass() == Pawn.class && ((piece.isWhite && newX == 7) || (!piece.isWhite && newX == 0))) {
+                            promotePawn(board, piece, newX, newY);
+                        }
                     } else {
                         System.out.println("Illegal move. Please Select a new move.");
                         movePiece(board, isWhite);
@@ -573,6 +502,22 @@ public class Move {
         } else {
             System.out.println("Move your own piece. Please Select a new move.");
             movePiece(board, isWhite);
+        }
+    }
+
+    public void promotePawn(Board board, Piece pawn, int x, int y) {
+        if (pawn.getClass() == Pawn.class && (x == 7 || x == 0)) {
+            Queen newQueen = new Queen(pawn.isWhite, y, x);
+            board.getBoard().get(y).set(x, newQueen);
+            if (pawn.isWhite) {
+                board.getWhitePieces().remove(pawn);
+                board.getWhitePieces().add(newQueen);
+            } else {
+                board.getBlackPieces().remove(pawn);
+                board.getBlackPieces().add(newQueen);
+            }
+            board.getBoard().get(x).set(y, newQueen);
+            System.out.println("Pawn has been promoted to a Queen!");
         }
     }
 }
