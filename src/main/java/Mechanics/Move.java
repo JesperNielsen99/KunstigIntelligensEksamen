@@ -307,7 +307,6 @@ public class Move {
         int x = piece.currentXPosition;
         int y = piece.currentYPosition;
         if (piece.getClass() == Pawn.class || piece.getClass() == Rook.class || piece.getClass() == Bishop.class || piece.getClass() == Queen.class) {
-            System.out.println("Move: " + piece + ": " + move.get(0) + ", " + move.get(1));
             int newMoveX = move.get(0);
             int newMoveY = move.get(1);
             ArrayList<Integer> nextMove = new ArrayList<>();
@@ -543,11 +542,31 @@ public class Move {
     public void movePiece(Board board, Piece piece, ArrayList<Integer> move) {
         int currentX = piece.currentXPosition;
         int currentY = piece.currentYPosition;
-        piece.currentXPosition = move.get(0);
-        piece.currentYPosition = move.get(1);
-        board.getBoard().get(move.get(0)).set(move.get(1), piece);
+        if (piece.getClass() == Pawn.class && ((piece.isWhite && move.get(0) == 7) || (!piece.isWhite && move.get(0) == 0))) {
+            promotePawn(board, piece, move.get(0), move.get(1));
+        } else {
+            piece.currentXPosition = move.get(0);
+            piece.currentYPosition = move.get(1);
+            board.getBoard().get(move.get(0)).set(move.get(1), piece);
+        }
         board.getBoard().get(currentX).set(currentY, null);
         piece.isFirstMove = false;
         board.changeTurns();
+    }
+
+    public void promotePawn(Board board, Piece pawn, int x, int y) {
+        if (pawn.getClass() == Pawn.class && (x == 7 || x == 0)) {
+            Queen newQueen = new Queen(pawn.isWhite, y, x);
+            board.getBoard().get(y).set(x, newQueen);
+            if (pawn.isWhite) {
+                board.getWhitePieces().remove(pawn);
+                board.getWhitePieces().add(newQueen);
+            } else {
+                board.getBlackPieces().remove(pawn);
+                board.getBlackPieces().add(newQueen);
+            }
+            board.getBoard().get(x).set(y, newQueen);
+            System.out.println("Pawn has been promoted to a Queen!");
+        }
     }
 }

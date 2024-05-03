@@ -14,47 +14,41 @@ public class AI {
         this.isWhite = isWhite;
     }
 
-    public double[] minimax(Board board, int depth, double alpha, double beta, boolean isMaximizingPlayer) {
+    public double[] minimax(Board board, int depth, double alpha, double beta, boolean isMaximizingPlayer, int initialDepth) {
         if (depth <= 0 || move.isGameOver(board)) {
-            return new double[]{evaluate(board), -1, -1};
-        }
-        ArrayList<Piece> aiPieces = new ArrayList<>();
-        ArrayList<Piece> opponentPieces = new ArrayList<>();
-        if (isWhite) {
-            aiPieces = board.getWhitePieces();
-            opponentPieces = board.getBlackPieces();
-        } else {
-            aiPieces = board.getBlackPieces();
-            opponentPieces = board.getWhitePieces();
+            return new double[]{evaluate(board), -1, -1, -1, -1};
         }
 
+        ArrayList<Piece> pieces = isMaximizingPlayer ? board.getBlackPieces() : board.getWhitePieces();
         double bestEval = isMaximizingPlayer ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
-        // Variables to track the best move found
         int bestPieceRow = -1;
         int bestPieceCol = -1;
         int bestMoveRow = -1;
         int bestMoveCol = -1;
 
-        for (Piece piece : isMaximizingPlayer ? aiPieces : opponentPieces) {
-            System.out.println("(" + bestPieceRow + ", " + bestPieceCol + ")");
-            if (bestPieceRow >= 0 && bestPieceCol >= 0) {
-                System.out.println(board);
-                System.out.println("Piece: " + board.getBoard().get(bestPieceRow).get(bestPieceCol));
-                System.out.println("Absolute Piece: " + piece);
-            }
+        for (Piece piece : pieces) {
+            System.out.println("Piece: " + piece);
             ArrayList<ArrayList<Integer>> legalMoves = move.getLegalMoves(board, piece, true);
+            System.out.println("Legal moves for " + piece + ": " + legalMoves);
             for (ArrayList<Integer> move : legalMoves) {
                 Board tempBoard = new Board(board); // Assuming you have a way to clone or copy the board
                 int currentX = piece.currentXPosition;
                 int currentY = piece.currentYPosition;
                 this.move.movePiece(tempBoard, piece, move);
-                double eval = minimax(tempBoard, depth - 1, alpha, beta, !isMaximizingPlayer)[0];
+                System.out.println(tempBoard);
+                double eval = minimax(tempBoard, (depth-1), alpha, beta, !isMaximizingPlayer, initialDepth)[0];
+                System.out.println("Move: " + move + ", Eval: " + eval);
                 if ((isMaximizingPlayer && eval > bestEval) || (!isMaximizingPlayer && eval < bestEval)) {
                     bestEval = eval;
-                    bestPieceRow = currentX; // Update best piece row
-                    bestPieceCol = currentY; // Update best piece column
-                    bestMoveRow = move.get(0); // Update best move row
-                    bestMoveCol = move.get(1); // Update best move column
+                    System.out.println("Best Eval: " + bestEval);
+                    System.out.println("Piece: " + board.getBoard().get(currentX).get(currentY));
+                    if (depth == initialDepth) {
+                        System.out.println("depth = init");
+                        bestPieceRow = currentX; // Update best piece row
+                        bestPieceCol = currentY; // Update best piece column
+                        bestMoveRow = move.get(0); // Update best move row
+                        bestMoveCol = move.get(1); // Update best move column
+                    }
                 }
                 if (isMaximizingPlayer) {
                     alpha = Math.max(alpha, bestEval);
@@ -101,7 +95,8 @@ public class AI {
     }
 
     public void aiMove(Board board) {
-        double[] result = minimax(board, 3, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+        int initialDepth = 1;
+        double[] result = minimax(board, initialDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true, initialDepth);
         double bestMoveScore = result[0];
         int bestPieceRow = (int) result[1];
         int bestPieceCol = (int) result[2];
