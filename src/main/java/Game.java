@@ -18,6 +18,7 @@ public class Game {
 
     public static void run() {
         while (true) {
+            /*
             if (!ai.isWhite) {
                 move.takeTurn(board, board.getPlayer());
                 ai.aiMove(board);
@@ -25,6 +26,9 @@ public class Game {
                 ai.aiMove(board);
                 move.takeTurn(board, board.getPlayer());
             }
+            */
+            move.takeTurn(board, board.getPlayer());
+            move.takeTurn(board, board.getPlayer());
 
             Piece.printHeuristicValues(board);
         }

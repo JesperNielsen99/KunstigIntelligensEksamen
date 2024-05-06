@@ -44,9 +44,6 @@ public class Board {
             board.get(6).set(i, new Pawn(false, 6, i)); // Black Pawns
         }
 
-
-
-
         // Setup Rooks
         board.get(0).set(0, new Rook(true, 0, 0)); // White Rook
         board.get(0).set(7, new Rook(true, 0, 7)); // White Rook

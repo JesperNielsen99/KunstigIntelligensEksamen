@@ -105,24 +105,26 @@ public class Move {
 
                         move.add(nextX);
                         move.add(nextY);
-                        if (isNotOutOfBounds(move) && !isOccupied(board, move) && direction == piece.directions.get(0)) {
-                            ArrayList<Boolean> isCheckedAfterMove = isCheckedAfterMove(board, piece, move);
-                            if (!isCheckedAfterMove.get(0)) {
-                                legalMoves.add(move);
-                                if (piece.isFirstMove && !isCheckedAfterMove.get(1)) {
-                                    x = nextX;
-                                    y = nextY;
-                                    nextX = x + direction.get(0);
-                                    nextY = y + direction.get(1);
+                        ArrayList<Boolean> isCheckedAfterMove = isCheckedAfterMove(board, piece, move);
+                        if (isNotOutOfBounds(move)) {
+                            if (!isOccupied(board, move) && direction == piece.directions.get(0)) {
+                                if (!isCheckedAfterMove.get(0)) {
+                                    legalMoves.add(move);
+                                    if (piece.isFirstMove && !isCheckedAfterMove.get(1)) {
+                                        x = nextX;
+                                        y = nextY;
+                                        nextX = x + direction.get(0);
+                                        nextY = y + direction.get(1);
 
-                                    move = new ArrayList<>();
+                                        move = new ArrayList<>();
 
-                                    move.add(nextX);
-                                    move.add(nextY);
+                                        move.add(nextX);
+                                        move.add(nextY);
 
-                                    isCheckedAfterMove = isCheckedAfterMove(board, piece, move);
-                                    if (isCheckedAfterMove.size() > 1 && !isCheckedAfterMove.get(1)) {
-                                        legalMoves.add(move);
+                                        isCheckedAfterMove = isCheckedAfterMove(board, piece, move);
+                                        if (isCheckedAfterMove.size() > 1 && !isCheckedAfterMove.get(1)) {
+                                            legalMoves.add(move);
+                                        }
                                     }
                                 }
                             } else if (isOccupied(board, move) && !isOccupiedByYou(board, move, piece.isWhite) && direction != piece.directions.get(0)) {
@@ -307,15 +309,15 @@ public class Move {
         int x = piece.currentXPosition;
         int y = piece.currentYPosition;
         if (piece.getClass() == Pawn.class || piece.getClass() == Rook.class || piece.getClass() == Bishop.class || piece.getClass() == Queen.class) {
-            System.out.println("Move: " + piece + ": " + move.get(0) + ", " + move.get(1));
             int newMoveX = move.get(0);
             int newMoveY = move.get(1);
             ArrayList<Integer> nextMove = new ArrayList<>();
             nextMove.add(newMoveX);
             nextMove.add(newMoveY);
-            if (isNotOutOfBounds(nextMove) && board.getBoard().get(newMoveX).get(newMoveY) == null) {
-                board.getBoard().get(newMoveX).set(newMoveY, piece);
-                piece.currentXPosition = newMoveY;
+            Piece pieceToCapture = board.getPieceAt(newMoveX, newMoveY);
+            if (isNotOutOfBounds(nextMove) && (pieceToCapture == null || pieceToCapture.isWhite != piece.isWhite)) {
+                board.setPieceAt(piece, newMoveX, newMoveY);
+                piece.currentXPosition = newMoveX;
                 piece.currentYPosition = newMoveY;
                 isKingInCheck = isKingInCheck(board, piece);
                 if (isKingInCheck.isEmpty()) {
@@ -332,7 +334,9 @@ public class Move {
                 } else {
                     isCheckedAfterMove.add(true);
                 }
-                board.getBoard().get(newMoveX).set(newMoveY, null);
+                board.setPieceAt(pieceToCapture, newMoveX, newMoveY);
+                //board.getBoard().get(newMoveX).set(newMoveY, pieceToCapture);
+                board.setPieceAt(piece, x, y);
                 piece.currentXPosition = x;
                 piece.currentYPosition = y;
             } else {
