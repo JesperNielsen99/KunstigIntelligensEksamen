@@ -52,4 +52,8 @@ public abstract class Piece {
         }
     }
 
+    public void setIsFirstMove(boolean isFirstMove) {
+        this.isFirstMove = isFirstMove;
+    }
+
 }

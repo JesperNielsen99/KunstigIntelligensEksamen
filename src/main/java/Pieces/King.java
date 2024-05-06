@@ -39,6 +39,8 @@ public class King extends Piece {
         super.directions.add(new ArrayList<>() {{ add(0); add(-1); }});
         super.directions.add(new ArrayList<>() {{ add(1); add(0); }});
         super.directions.add(new ArrayList<>() {{ add(-1); add(0); }});
+        super.directions.add(new ArrayList<>() {{ add(0); add(2);}});
+        super.directions.add(new ArrayList<>() {{ add(0); add(-2);}});
     }
 
     @Override
