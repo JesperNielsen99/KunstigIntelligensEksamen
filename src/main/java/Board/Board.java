@@ -125,7 +125,6 @@ public class Board {
         }
     }
 
-//    <<<<<<<<<<<<< NYT >>>>>>>>>>>>>>>>>>>>>>>>>
     public Piece getPieceAt(int x, int y) {
         // Check if coordinates are out of bounds
         if (x < 0 || x >= 8 || y < 0 || y >= 8) {
@@ -188,9 +187,6 @@ public class Board {
         }
     }
 
-
-//    <<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
     public String toString() {
         String boardString = "------------------\n";
         for (int i = 0; i < 8; i++) {
@@ -207,6 +203,4 @@ public class Board {
         boardString += "  a b c d e f g h";
         return boardString;
     }
-
-
 }

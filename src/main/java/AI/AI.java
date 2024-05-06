@@ -2,6 +2,7 @@ package AI;
 
 import Board.Board;
 import Mechanics.Move;
+import Pieces.Pawn;
 import Pieces.Piece;
 
 import java.util.ArrayList;
@@ -9,18 +10,17 @@ import java.util.ArrayList;
 public class AI {
     public boolean isWhite;
     Move move = new Move();
-    public Board board;
 
     public AI(boolean isWhite) {
         this.isWhite = isWhite;
     }
 
-    public double[] minimax(Board board, int depth, double alpha, double beta, boolean isMaximizingPlayer) {
+    public double[] minimax(Board board, int depth, double alpha, double beta, boolean isMaximizingPlayer, int initialDepth) {
         if (depth == 0 || move.isGameOver(board)) {
             return new double[]{evaluate(board), -1, -1, -1, -1};
         }
 
-        ArrayList<Piece> pieces = isMaximizingPlayer ? new ArrayList<>(board.getWhitePieces()) : new ArrayList<>(board.getBlackPieces());
+        ArrayList<Piece> pieces = isMaximizingPlayer ? new ArrayList<>(board.getBlackPieces()) : new ArrayList<>(board.getWhitePieces());
         double bestEval = isMaximizingPlayer ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         int bestPieceRow = -1;
         int bestPieceCol = -1;
@@ -28,8 +28,10 @@ public class AI {
         int bestMoveCol = -1;
 
         for (Piece piece : pieces) {
+            System.out.println("Piece: " + piece);
             ArrayList<ArrayList<Integer>> legalMoves = move.getLegalMoves(board, piece, true);
             for (ArrayList<Integer> singleMove : legalMoves) {
+                System.out.println("Move: (" + singleMove.get(0) + ", " + singleMove.get(1) + ")");
                 int startX = piece.currentXPosition; // Store the original X
                 int startY = piece.currentYPosition; // Store the original Y
                 int endX = singleMove.get(0);        // Destination X
@@ -40,9 +42,10 @@ public class AI {
 
                 // Execute move
                 executeMove(board, piece, singleMove);
+                System.out.println(board);
 
                 // Recursive call
-                double eval = minimax(board, depth - 1, alpha, beta, !isMaximizingPlayer)[0];
+                double eval = minimax(board, depth - 1, alpha, beta, !isMaximizingPlayer, initialDepth)[0];
 
                 // Undo move
                 undoMove(board, piece, startX, startY, endX, endY, capturedPiece);
@@ -50,10 +53,12 @@ public class AI {
                 // Update best move if necessary
                 if ((isMaximizingPlayer && eval > bestEval) || (!isMaximizingPlayer && eval < bestEval)) {
                     bestEval = eval;
-                    bestPieceRow = startX;  // Return to the starting position
-                    bestPieceCol = startY;  // Return to the starting position
-                    bestMoveRow = endX;     // Move to destination
-                    bestMoveCol = endY;     // Move to destination
+                    if (depth == initialDepth) {
+                        bestPieceRow = startX;  // Return to the starting position
+                        bestPieceCol = startY;  // Return to the starting position
+                        bestMoveRow = endX;     // Move to destination
+                        bestMoveCol = endY;     // Move to destination
+                    }
                 }
 
                 // Alpha-beta pruning
@@ -82,26 +87,20 @@ public class AI {
 
         // Check if there's a capture
         Piece capturedPiece = board.getPieceAt(endX, endY);
+        System.out.println("Piece taken: " + capturedPiece);
         if (capturedPiece != null) {
             board.removePiece(capturedPiece);
         }
 
-
         // Move the piece on the board
         board.setPieceAt(null, startX, startY);  // Remove piece from the old location
         board.setPieceAt(piece, endX, endY);     // Place piece at the new location
-
-        // Update the piece's position
-        piece.currentXPosition = endX;
-        piece.currentYPosition = endY;
     }
 
     private void undoMove(Board board, Piece piece, int startX, int startY, int endX, int endY, Piece capturedPiece) {
         // Move the piece back to its original position
         board.setPieceAt(null, endX, endY);  // Clear the end position
         board.setPieceAt(piece, startX, startY);  // Restore piece to its original position
-        piece.currentXPosition = startX;
-        piece.currentYPosition = startY;
 
         // Restore the captured piece if there was one
         if (capturedPiece != null) {
@@ -139,9 +138,11 @@ public class AI {
         return score;
     }
 
-    private void executeBestMove(int startX, int startY, int endX, int endY) {
+    private void executeBestMove(Board board, int startX, int startY, int endX, int endY) {
         Piece piece = board.getPieceAt(startX, startY);
-        if (piece != null) {
+        System.out.println("Best Piece: (" + startX + ", " + startY + ")");
+        System.out.println("Best Move: (" + endX + ", " + endY + ")");
+        if (piece != null && piece.isWhite == isWhite) {
             Piece capturedPiece = board.getPieceAt(endX, endY);
             if (capturedPiece != null && capturedPiece.isWhite != piece.isWhite) {  // Ensure capturing an opponent's piece
                 board.removePiece(capturedPiece);  // Remove from the board
@@ -151,12 +152,11 @@ public class AI {
             move.add(endY);
             this.move.movePiece(board, piece, move);
         }
-
     }
 
-
     public void aiMove(Board board) {
-        double[] result = minimax(board, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false);
+        int initialDepth = 1;
+        double[] result = minimax(board, initialDepth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, initialDepth);
         double bestMoveScore = result[0];
         int bestPieceRow = (int) result[1];
         int bestPieceCol = (int) result[2];
@@ -169,11 +169,7 @@ public class AI {
 
         // Perform the best move found by the minimax algorithm
         if (bestPieceRow != -1 && bestPieceCol != -1 && bestMoveRow != -1 && bestMoveCol != -1) {
-            Piece piece = board.getBoard().get(bestPieceRow).get(bestPieceCol);
-            ArrayList<Integer> move = new ArrayList<>();
-            move.add(bestMoveRow);
-            move.add(bestMoveCol);
-            this.move.movePiece(board, piece, move);
+            executeBestMove(board, bestPieceRow, bestPieceCol, bestMoveRow, bestMoveCol);
         } else {
             System.out.println("No valid move found!");
         }

@@ -128,7 +128,7 @@ public class Move {
                                     }
                                 }
                             } else if (isOccupied(board, move) && !isOccupiedByYou(board, move, piece.isWhite) && direction != piece.directions.get(0)) {
-                                if (!isCheckedAfterMove.get(1)) {
+                                if (!isCheckedAfterMove.get(0)) {
                                     legalMoves.add(move);
                                 }
                             }
@@ -145,7 +145,7 @@ public class Move {
                         move.add(nextX);
                         move.add(nextY);
 
-                        if (!isCheckedAfterMove(board, piece, move).get(0)) {
+                        if (isNotOutOfBounds(move) && !isCheckedAfterMove(board, piece, move).get(0)) {
                             legalMoves.add(move);
                         }
                     }
@@ -202,7 +202,7 @@ public class Move {
 
                         piece.currentXPosition = nextX;
                         piece.currentYPosition = nextY;
-                        if (isKingInCheck(board, piece).isEmpty()) {
+                        /*if (isKingInCheck(board, piece).isEmpty()) {
                             ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
 
                             if (legalMoveOrNot.get(0)) {
@@ -211,6 +211,10 @@ public class Move {
                         }
                         piece.currentXPosition = x;
                         piece.currentYPosition = y;
+                        */
+                        if (isNotOutOfBounds(move) && !isCheckedAfterMove(board, piece, move).get(0)) {
+                            legalMoves.add(move);
+                        }
                     }
                 }
             }
@@ -308,55 +312,34 @@ public class Move {
         ArrayList<Piece> isKingInCheck = new ArrayList<>();
         int x = piece.currentXPosition;
         int y = piece.currentYPosition;
-        if (piece.getClass() == Pawn.class || piece.getClass() == Rook.class || piece.getClass() == Bishop.class || piece.getClass() == Queen.class) {
-            int newMoveX = move.get(0);
-            int newMoveY = move.get(1);
-            ArrayList<Integer> nextMove = new ArrayList<>();
-            nextMove.add(newMoveX);
-            nextMove.add(newMoveY);
-            Piece pieceToCapture = board.getPieceAt(newMoveX, newMoveY);
-            if (isNotOutOfBounds(nextMove) && (pieceToCapture == null || pieceToCapture.isWhite != piece.isWhite)) {
-                board.setPieceAt(piece, newMoveX, newMoveY);
-                piece.currentXPosition = newMoveX;
-                piece.currentYPosition = newMoveY;
-                isKingInCheck = isKingInCheck(board, piece);
-                if (isKingInCheck.isEmpty()) {
-                    if (legalMoveOrNot.get(0)) {
+        int newMoveX = move.get(0);
+        int newMoveY = move.get(1);
+        ArrayList<Integer> nextMove = new ArrayList<>();
+        nextMove.add(newMoveX);
+        nextMove.add(newMoveY);
+        Piece pieceToCapture = board.getPieceAt(newMoveX, newMoveY);
+        if (isNotOutOfBounds(nextMove) && (pieceToCapture == null || pieceToCapture.isWhite != piece.isWhite)) {
+            board.setPieceAt(null, x, y);
+            board.setPieceAt(piece, newMoveX, newMoveY);
+            isKingInCheck = isKingInCheck(board, piece);
+            if (isKingInCheck.isEmpty()) {
+                if (legalMoveOrNot.get(0)) {
+                    isCheckedAfterMove.add(false);
+                    if (legalMoveOrNot.get(1)) {
                         isCheckedAfterMove.add(false);
-                        if (legalMoveOrNot.get(1)) {
-                            isCheckedAfterMove.add(false);
-                        } else {
-                            isCheckedAfterMove.add(true);
-                        }
                     } else {
                         isCheckedAfterMove.add(true);
                     }
                 } else {
                     isCheckedAfterMove.add(true);
                 }
-                board.setPieceAt(pieceToCapture, newMoveX, newMoveY);
-                //board.getBoard().get(newMoveX).set(newMoveY, pieceToCapture);
-                board.setPieceAt(piece, x, y);
-                piece.currentXPosition = x;
-                piece.currentYPosition = y;
             } else {
                 isCheckedAfterMove.add(true);
             }
+            board.setPieceAt(pieceToCapture, newMoveX, newMoveY);
+            board.setPieceAt(piece, x, y);
         } else {
-            piece.currentXPosition = move.get(0);
-            piece.currentYPosition = move.get(1);
-            isKingInCheck = isKingInCheck(board, piece);
-            if (isKingInCheck.isEmpty()) {
-                if (legalMoveOrNot.get(0)) {
-                    isCheckedAfterMove.add(false);
-                } else {
-                    isCheckedAfterMove.add(true);
-                }
-            } else {
-                isCheckedAfterMove.add(true);
-            }
-            piece.currentXPosition = x;
-            piece.currentYPosition = y;
+            isCheckedAfterMove.add(true);
         }
         return isCheckedAfterMove;
     }
@@ -418,12 +401,12 @@ public class Move {
     private boolean isInCheckmate(Board board, boolean isWhite) {
         ArrayList<Piece> pieces = new ArrayList<>();
         if (isWhite) {
-            pieces = board.getWhitePieces();
+            pieces = new ArrayList<>(board.getWhitePieces());
         } else {
-            pieces = board.getBlackPieces();
+            pieces = new ArrayList<>(board.getBlackPieces());
         }
         for (Piece piece : pieces) {
-            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
+            ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>(getLegalMoves(board, piece, true));
             if (!legalMoves.isEmpty()) {
                 return false; // There exists at least one legal move, so not in checkmate
             }
@@ -490,9 +473,6 @@ public class Move {
 
         boolean isKingInCheck = !isKingInCheck(board, board.findKing(isWhite)).isEmpty();
         System.out.println(isKingInCheck);
-        //if (isKingInCheck) {}
-        //STOP CHECK
-        //CASTLE, Ensure not in check.
         System.out.println(board);
         System.out.println("Which piece would you like to move?");
         System.out.println("Enter the chess positions (e.g., A3 A5):");
@@ -510,7 +490,6 @@ public class Move {
         Piece piece = board.getBoard().get(oldX).get(oldY);
 
         if (piece != null && piece.isWhite == isWhite) {
-        //if (piece != null) {
             ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
             if (coordinates[2] != -1) {
                 if (!legalMoves.isEmpty()) {
@@ -545,13 +524,13 @@ public class Move {
     }
 
     public void movePiece(Board board, Piece piece, ArrayList<Integer> move) {
+        int nextX = move.get(0);
+        int nextY = move.get(1);
         int currentX = piece.currentXPosition;
         int currentY = piece.currentYPosition;
-        piece.currentXPosition = move.get(0);
-        piece.currentYPosition = move.get(1);
 
-        board.getBoard().get(move.get(0)).set(move.get(1), piece);
-        board.getBoard().get(currentX).set(currentY, null);
+        board.setPieceAt(null, currentX, currentY);
+        board.setPieceAt(piece, nextX, nextY);
         piece.isFirstMove = false;
         board.changeTurns();
     }

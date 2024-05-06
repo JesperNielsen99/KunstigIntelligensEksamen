@@ -18,19 +18,22 @@ public class Game {
 
     public static void run() {
         while (true) {
-            /*
-            if (!ai.isWhite) {
-                move.takeTurn(board, board.getPlayer());
-                ai.aiMove(board);
+            if (!move.isGameOver(board)) {
+                if (!ai.isWhite) {
+                    move.takeTurn(board, board.getPlayer());
+                    System.out.println(board);
+                    ai.aiMove(board);
+                } else {
+                    ai.aiMove(board);
+                    move.takeTurn(board, board.getPlayer());
+                }
             } else {
-                ai.aiMove(board);
-                move.takeTurn(board, board.getPlayer());
+                if (board.getPlayer()) {
+                    System.out.println("Game Over! The AI is the Winner!");
+                }
+                System.out.println("Game Over! The Player is the Winner!");
+                break;
             }
-            */
-            move.takeTurn(board, board.getPlayer());
-            move.takeTurn(board, board.getPlayer());
-
-            Piece.printHeuristicValues(board);
         }
     }
 
