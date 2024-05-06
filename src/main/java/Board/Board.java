@@ -128,6 +128,72 @@ public class Board {
         }
     }
 
+//    <<<<<<<<<<<<< NYT >>>>>>>>>>>>>>>>>>>>>>>>>
+    public Piece getPieceAt(int x, int y) {
+        // Check if coordinates are out of bounds
+        if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+            return null; // Return null if out of bounds
+        }
+        return board.get(x).get(y); // Return the piece at the specified location
+    }
+
+    public void removePiece(Piece piece) {
+        if (piece == null) {
+            return; // If there's no piece, there's nothing to remove
+        }
+        // Get the current coordinates of the piece
+        int x = piece.currentXPosition;
+        int y = piece.currentYPosition;
+
+        // Set the board position to null to remove the piece
+        board.get(x).set(y, null);
+
+        // Also remove the piece from the respective list of pieces
+        if (piece.isWhite) {
+            whitePieces.remove(piece);
+        } else {
+            blackPieces.remove(piece);
+        }
+    }
+
+    public void setPieceAt(Piece piece, int x, int y) {
+        // Check if the coordinates are out of bounds
+        if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+            throw new IndexOutOfBoundsException("Coordinates are out of the board's bounds.");
+        }
+
+        // Get the current piece at the location (if any)
+        Piece currentPiece = getPieceAt(x, y);
+
+        // If there is a piece currently at the location, remove it
+        if (currentPiece != null) {
+            removePiece(currentPiece);
+        }
+
+        // Place the new piece at the specified location
+        board.get(x).set(y, piece);
+
+        // Update the piece's position if it is not null
+        if (piece != null) {
+            piece.currentXPosition = x;
+            piece.currentYPosition = y;
+
+            // Add the piece to the correct list of pieces (white or black)
+            if (piece.isWhite) {
+                if (!whitePieces.contains(piece)) {
+                    whitePieces.add(piece);
+                }
+            } else {
+                if (!blackPieces.contains(piece)) {
+                    blackPieces.add(piece);
+                }
+            }
+        }
+    }
+
+
+//    <<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
     public String toString() {
         String boardString = "------------------\n";
         for (int i = 0; i < 8; i++) {
