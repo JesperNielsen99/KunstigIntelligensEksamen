@@ -33,6 +33,7 @@ public class Move {
         ArrayList<Piece> piecesCheckingKing = new ArrayList<>();
         Piece king = board.findKing(piece.isWhite);
 
+
         // Find the king's position
         ArrayList<Integer> kingPosition = new ArrayList<>();
         kingPosition.add(king.currentXPosition);
@@ -150,7 +151,7 @@ public class Move {
                         }
                     }
                 }
-            } else if (piecesCheckingKing.size() == 1) { ///////////////////////////////////////////////////////////////////////////
+            } else if (piecesCheckingKing.size() == 1) {
                 if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class || piece.getClass() == Queen.class) {
                     for (ArrayList<Integer> direction : piece.directions) {
                         int x = piece.currentXPosition;
@@ -189,7 +190,7 @@ public class Move {
                             }
                         }
                     }
-                } else if (piece.getClass() == King.class) {
+                } else {
                     for (ArrayList<Integer> direction : piece.directions) {
                         int x = piece.currentXPosition;
                         int y = piece.currentYPosition;
@@ -202,21 +203,13 @@ public class Move {
 
                         piece.currentXPosition = nextX;
                         piece.currentYPosition = nextY;
-                        /*if (isKingInCheck(board, piece).isEmpty()) {
-                            ArrayList<Boolean> legalMoveOrNot = isLegalMove(board, move, piece.isWhite);
-
-                            if (legalMoveOrNot.get(0)) {
-                                legalMoves.add(move);
-                            }
-                        }
-                        piece.currentXPosition = x;
-                        piece.currentYPosition = y;
-                        */
                         if (isNotOutOfBounds(move) && !isCheckedAfterMove(board, piece, move).get(0)) {
                             legalMoves.add(move);
                         }
                     }
                 }
+            } else {
+                isGameOver(board);
             }
         } else {
             if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class || piece.getClass() == Queen.class) {
@@ -528,6 +521,15 @@ public class Move {
         int nextY = move.get(1);
         int currentX = piece.currentXPosition;
         int currentY = piece.currentYPosition;
+
+        Piece capturedPiece = board.getPieceAt(currentX, currentY);
+        if (capturedPiece != null) {
+            if (capturedPiece.isWhite) {
+                board.getWhitePieces().remove(capturedPiece);
+            } else {
+                board.getBlackPieces().remove(capturedPiece);
+            }
+        }
 
         board.setPieceAt(null, currentX, currentY);
         board.setPieceAt(piece, nextX, nextY);

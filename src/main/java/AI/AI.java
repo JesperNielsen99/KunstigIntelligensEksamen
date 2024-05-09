@@ -2,6 +2,7 @@ package AI;
 
 import Board.Board;
 import Mechanics.Move;
+import Pieces.King;
 import Pieces.Pawn;
 import Pieces.Piece;
 
@@ -41,7 +42,7 @@ public class AI {
                 Piece capturedPiece = board.getPieceAt(endX, endY);
 
                 // Execute move
-                executeMove(board, piece, singleMove);
+                simulateMove(board, piece, singleMove);
                 System.out.println(board);
 
                 // Recursive call
@@ -50,6 +51,7 @@ public class AI {
                 // Undo move
                 undoMove(board, piece, startX, startY, endX, endY, capturedPiece);
 
+                System.out.println(board);
                 // Update best move if necessary
                 if ((isMaximizingPlayer && eval > bestEval) || (!isMaximizingPlayer && eval < bestEval)) {
                     bestEval = eval;
@@ -79,17 +81,26 @@ public class AI {
     }
 
 
-    private void executeMove(Board board, Piece piece, ArrayList<Integer> move) {
+    private void simulateMove(Board board, Piece piece, ArrayList<Integer> move) {
         int startX = piece.currentXPosition;
         int startY = piece.currentYPosition;
         int endX = move.get(0);
         int endY = move.get(1);
+
+        Piece newPiece = new Pawn(true, 0, 0);
+        if (!this.move.isKingInCheck(board, newPiece).isEmpty()) {
+            System.out.println(board);
+        }
 
         // Check if there's a capture
         Piece capturedPiece = board.getPieceAt(endX, endY);
         System.out.println("Piece taken: " + capturedPiece);
         if (capturedPiece != null) {
             board.removePiece(capturedPiece);
+        }
+
+        if (piece.getClass() == King.class && piece.isWhite) {
+            System.out.println("King: " + piece);
         }
 
         // Move the piece on the board
@@ -155,7 +166,7 @@ public class AI {
     }
 
     public void aiMove(Board board) {
-        int initialDepth = 1;
+        int initialDepth = 4;
         double[] result = minimax(board, initialDepth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, initialDepth);
         double bestMoveScore = result[0];
         int bestPieceRow = (int) result[1];
