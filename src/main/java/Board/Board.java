@@ -187,6 +187,36 @@ public class Board {
         }
     }
 
+    public void undoMove(Piece piece, Piece capturedPiece, int oldX, int oldY, int newX, int newY) {
+        if (capturedPiece != null) {
+            capturedPiece.currentXPosition = newX;
+            capturedPiece.currentYPosition = newY;
+
+            // Add the piece to the correct list of pieces (white or black)
+            if (capturedPiece.isWhite) {
+                if (!whitePieces.contains(capturedPiece)) {
+                    whitePieces.add(capturedPiece);
+                }
+            } else {
+                if (!blackPieces.contains(capturedPiece)) {
+                    blackPieces.add(capturedPiece);
+                }
+            }
+        }
+        setPieceAt(capturedPiece, newX, newY);
+        setPieceAt(piece, oldX, oldY);
+    }
+
+    public Piece movePiece(Piece piece, int newX, int newY) {
+        int currentX = piece.currentXPosition;
+        int currentY = piece.currentYPosition;
+        Piece pieceCaptured = getPieceAt(newX, newY);
+        setPieceAt(null, currentX, currentY);
+        setPieceAt(piece, newX, newY);
+        piece.isFirstMove = false;
+        return pieceCaptured;
+    }
+
     public String toString() {
         String boardString = "------------------\n";
         for (int i = 0; i < 8; i++) {

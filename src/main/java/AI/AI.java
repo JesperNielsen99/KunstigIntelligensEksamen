@@ -88,7 +88,7 @@ public class AI {
         int endY = move.get(1);
 
         Piece newPiece = new Pawn(true, 0, 0);
-        if (!this.move.isKingInCheck(board, newPiece).isEmpty()) {
+        if (!this.move.isKingInCheck(board, newPiece.isWhite)) {
             System.out.println(board);
         }
 
