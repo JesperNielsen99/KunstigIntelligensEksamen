@@ -3,6 +3,7 @@ import Pieces.*;
 import Board.Board;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Move {
@@ -22,8 +23,21 @@ public class Move {
         int x = position.get(0);
         int y = position.get(1);
         Piece piece = board.getPieceAt(x, y);
-        return piece != null && piece.isWhite == isWhite;
+        // First check if there is a piece at the position
+        if (piece == null) {
+            return false;  // If there's no piece, it can't be occupied by a piece of the same color
+        }
+        // Now safely check the color since we know piece is not null
+        return piece.isWhite == isWhite;
     }
+
+
+//    public boolean isOccupiedBySameColor(Board board, ArrayList<Integer> position, boolean isWhite) {
+//        int x = position.get(0);
+//        int y = position.get(1);
+//        Piece piece = board.getPieceAt(x, y);
+//        return piece != null && piece.isWhite == isWhite;
+//    }
 
     public boolean isWithinBounds(ArrayList<Integer> position) {
         int x = position.get(0);
@@ -314,9 +328,11 @@ public class Move {
         return coordinates;
     }
 
-    public void takeTurn(Board board, boolean isWhite) {
-        boolean isKingInCheck = isKingInCheck(board, isWhite);
+//
 
+    public void takeTurn(Board board, boolean isWhite) {
+        System.out.println(board);
+        boolean isKingInCheck = isKingInCheck(board, isWhite);
         System.out.println(isKingInCheck ? "Your king is in check!" : "");
         System.out.println(board);
         System.out.println("Which piece would you like to move?");
@@ -329,25 +345,21 @@ public class Move {
 
         Piece piece = board.getPieceAt(oldX, oldY);
 
+
         if (piece != null && piece.isWhite == isWhite) {
             ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
-            if (newX != -1) {
-                ArrayList<Integer> move = new ArrayList<>();
-                move.add(newX);
-                move.add(newY);
-                if (legalMoves.contains(move) && !isMovePuttingOwnKingInCheck(board, piece, move)) {
-                    board.setPieceAt(piece, newX, newY);
-                    System.out.println("Turn ended!");
-                } else {
-                    System.out.println("Illegal move or puts your own king in check. Please select a new move.");
-                    takeTurn(board, isWhite);
+            ArrayList<Integer> move = new ArrayList<>();
+            move.add(newX);
+            move.add(newY);
+            if (legalMoves.contains(move) && !isMovePuttingOwnKingInCheck(board, piece, move)) {
+                Piece capturedPiece = board.movePiece(piece, newX, newY);  // This now handles all move logic
+                if (capturedPiece != null) {
+                    System.out.println("Captured a piece!");
                 }
+                System.out.println("Turn ended!");
+                board.changeTurns();  // Make sure to toggle the turn after a successful move
             } else {
-                System.out.print("Legal moves: ");
-                for (ArrayList<Integer> move : legalMoves) {
-                    System.out.print("(" + (char) (move.get(1) + 'a') + (move.get(0) + 1) + ") ");
-                }
-                System.out.println("\n");
+                System.out.println("Illegal move or puts your own king in check. Please select a new move.");
                 takeTurn(board, isWhite);
             }
         } else if (piece == null) {
@@ -358,4 +370,51 @@ public class Move {
             takeTurn(board, isWhite);
         }
     }
+
+
+
+//    public void takeTurn(Board board, boolean isWhite) {
+//        boolean isKingInCheck = isKingInCheck(board, isWhite);
+//
+//        System.out.println(isKingInCheck ? "Your king is in check!" : "");
+//        System.out.println(board);
+//        System.out.println("Which piece would you like to move?");
+//        int[] coordinates = getInputFromUser();
+//
+//        int oldX = coordinates[0];
+//        int oldY = coordinates[1];
+//        int newX = coordinates[2];
+//        int newY = coordinates[3];
+//
+//        Piece piece = board.getPieceAt(oldX, oldY);
+//
+//        if (piece != null && piece.isWhite == isWhite) {
+//            ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
+//            if (newX != -1) {
+//                ArrayList<Integer> move = new ArrayList<>();
+//                move.add(newX);
+//                move.add(newY);
+//                if (legalMoves.contains(move) && !isMovePuttingOwnKingInCheck(board, piece, move)) {
+//                    board.setPieceAt(piece, newX, newY);
+//                    System.out.println("Turn ended!");
+//                } else {
+//                    System.out.println("Illegal move or puts your own king in check. Please select a new move.");
+//                    takeTurn(board, isWhite);
+//                }
+//            } else {
+//                System.out.print("Legal moves: ");
+//                for (ArrayList<Integer> move : legalMoves) {
+//                    System.out.print("(" + (char) (move.get(1) + 'a') + (move.get(0) + 1) + ") ");
+//                }
+//                System.out.println("\n");
+//                takeTurn(board, isWhite);
+//            }
+//        } else if (piece == null) {
+//            System.out.println("That space is empty. Please select a piece to move.");
+//            takeTurn(board, isWhite);
+//        } else {
+//            System.out.println("Move your own piece. Please select a new move.");
+//            takeTurn(board, isWhite);
+//        }
+//    }
 }

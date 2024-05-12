@@ -133,59 +133,79 @@ public class Board {
         return board.get(x).get(y); // Return the piece at the specified location
     }
 
-    public void removePiece(Piece piece) {
-        if (piece == null) {
-            return; // If there's no piece, there's nothing to remove
-        }
-        // Get the current coordinates of the piece
-        int x = piece.currentXPosition;
-        int y = piece.currentYPosition;
-
-        // Set the board position to null to remove the piece
-        board.get(x).set(y, null);
-
-        // Also remove the piece from the respective list of pieces
-        if (piece.isWhite) {
-            whitePieces.remove(piece);
-        } else {
-            blackPieces.remove(piece);
-        }
-    }
+//    public void removePiece(Piece piece) {
+//        if (piece == null) {
+//            return; // If there's no piece, there's nothing to remove
+//        }
+//        // Get the current coordinates of the piece
+//        int x = piece.currentXPosition;
+//        int y = piece.currentYPosition;
+//
+//        System.out.println("Attempting to remove piece at (" + x + ", " + y + ")");
+//        // Set the board position to null to remove the piece
+//        board.get(x).set(y, null);
+//
+//        // Also remove the piece from the respective list of pieces
+//        if (piece.isWhite) {
+//            whitePieces.remove(piece);
+//        } else {
+//            blackPieces.remove(piece);
+//        }
+//        System.out.println("Removing piece from (" + piece.currentXPosition + "," + piece.currentYPosition + ")");
+//    }
 
     public void setPieceAt(Piece piece, int x, int y) {
-        // Check if the coordinates are out of bounds
+        // First, check if the specified coordinates are within the board's bounds.
         if (x < 0 || x >= 8 || y < 0 || y >= 8) {
             throw new IndexOutOfBoundsException("Coordinates are out of the board's bounds.");
         }
 
-        // Get the current piece at the location (if any)
+        // Retrieve the current piece at the specified location, if any.
         Piece currentPiece = getPieceAt(x, y);
 
-        // If there is a piece currently at the location, remove it
+
         if (currentPiece != null) {
             removePiece(currentPiece);
         }
 
-        // Place the new piece at the specified location
+        // Place the new piece at the specified location on the board.
         board.get(x).set(y, piece);
 
-        // Update the piece's position if it is not null
+
+
         if (piece != null) {
             piece.currentXPosition = x;
             piece.currentYPosition = y;
 
-            // Add the piece to the correct list of pieces (white or black)
-            if (piece.isWhite) {
-                if (!whitePieces.contains(piece)) {
-                    whitePieces.add(piece);
-                }
-            } else {
-                if (!blackPieces.contains(piece)) {
-                    blackPieces.add(piece);
-                }
-            }
+            managePieceListAddition(piece);
         }
     }
+
+    private void managePieceListAddition(Piece piece) {
+        // Determine the correct list based on the piece's color.
+        ArrayList<Piece> targetList = piece.isWhite ? whitePieces : blackPieces;
+
+        if (!targetList.contains(piece)) {
+            targetList.add(piece);
+        }
+    }
+
+    public void removePiece(Piece piece) {
+        // Extract the piece's coordinates.
+        int x = piece.currentXPosition;
+        int y = piece.currentYPosition;
+
+        // Remove the piece from the board by setting its position to null.
+        board.get(x).set(y, null);
+
+        // Remove the piece from its respective color list.
+        ArrayList<Piece> targetList = piece.isWhite ? whitePieces : blackPieces;
+        targetList.remove(piece);
+
+
+        System.out.println("Removed piece from (" + x + "," + y + ")");
+    }
+
 
     public void undoMove(Piece piece, Piece capturedPiece, int oldX, int oldY, int newX, int newY) {
         if (capturedPiece != null) {
@@ -208,6 +228,7 @@ public class Board {
     }
 
     public Piece movePiece(Piece piece, int newX, int newY) {
+        System.out.println("Moving piece from (" + piece.currentXPosition + ", " + piece.currentYPosition + ") to (" + newX + ", " + newY + ")");
         int currentX = piece.currentXPosition;
         int currentY = piece.currentYPosition;
         Piece pieceCaptured = getPieceAt(newX, newY);
