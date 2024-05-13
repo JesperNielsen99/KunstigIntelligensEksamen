@@ -133,27 +133,6 @@ public class Board {
         return board.get(x).get(y); // Return the piece at the specified location
     }
 
-//    public void removePiece(Piece piece) {
-//        if (piece == null) {
-//            return; // If there's no piece, there's nothing to remove
-//        }
-//        // Get the current coordinates of the piece
-//        int x = piece.currentXPosition;
-//        int y = piece.currentYPosition;
-//
-//        System.out.println("Attempting to remove piece at (" + x + ", " + y + ")");
-//        // Set the board position to null to remove the piece
-//        board.get(x).set(y, null);
-//
-//        // Also remove the piece from the respective list of pieces
-//        if (piece.isWhite) {
-//            whitePieces.remove(piece);
-//        } else {
-//            blackPieces.remove(piece);
-//        }
-//        System.out.println("Removing piece from (" + piece.currentXPosition + "," + piece.currentYPosition + ")");
-//    }
-
     public void setPieceAt(Piece piece, int x, int y) {
         // First, check if the specified coordinates are within the board's bounds.
         if (x < 0 || x >= 8 || y < 0 || y >= 8) {
@@ -203,7 +182,7 @@ public class Board {
         targetList.remove(piece);
 
 
-        System.out.println("Removed piece from (" + x + "," + y + ")");
+        //System.out.println("Removed piece from (" + x + "," + y + ")");
     }
 
 
@@ -228,13 +207,12 @@ public class Board {
     }
 
     public Piece movePiece(Piece piece, int newX, int newY) {
-        System.out.println("Moving piece from (" + piece.currentXPosition + ", " + piece.currentYPosition + ") to (" + newX + ", " + newY + ")");
+        //System.out.println("Moving piece from (" + piece.currentXPosition + ", " + piece.currentYPosition + ") to (" + newX + ", " + newY + ")");
         int currentX = piece.currentXPosition;
         int currentY = piece.currentYPosition;
         Piece pieceCaptured = getPieceAt(newX, newY);
         setPieceAt(null, currentX, currentY);
         setPieceAt(piece, newX, newY);
-        piece.isFirstMove = false;
         return pieceCaptured;
     }
 

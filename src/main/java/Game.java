@@ -20,7 +20,6 @@ public class Game {
         while (true) {
             if (!move.isGameOver(board)) {
                 move.takeTurn(board, board.getPlayer());
-                move.takeTurn(board, board.getPlayer());
                 /*
                 if (!ai.isWhite) {
                     move.takeTurn(board, board.getPlayer());
