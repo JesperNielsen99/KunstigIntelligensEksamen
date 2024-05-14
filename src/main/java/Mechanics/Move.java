@@ -270,7 +270,6 @@ public class Move {
 
     public int[] getInputFromUser() {
         int[] coordinates = new int[4];
-
         System.out.println("Enter the chess positions (e.g., a3 a5):");
         String input = scanner.nextLine();
 
@@ -279,7 +278,6 @@ public class Move {
                 coordinates[1] = -1;
                 return coordinates;
             }
-
             String[] positions = input.split(" ");
             if (positions.length == 2) {
                 for (String position : positions) {
@@ -316,14 +314,11 @@ public class Move {
     public void takeTurn(Board board, boolean isWhite) {
         System.out.println(board);
         System.out.println("Which piece would you like to move?");
-
         int[] coordinates = getInputFromUser();
-
         if(coordinates[0] == -1) {
             System.out.println("No input made!");
             takeTurn(board, isWhite);
         }
-
         if (coordinates[1] != -1) {
 
             int oldX = coordinates[0];
@@ -343,6 +338,7 @@ public class Move {
                     Piece capturedPiece = movePiece(board, piece, move);  // This now handles all move logic
                     if (capturedPiece != null) {
                         System.out.println("Captured a piece!");
+
                     }
                     System.out.println("Turn ended!");
                     board.changeTurns();
@@ -371,6 +367,22 @@ public class Move {
                 }
             }
             takeTurn(board, isWhite);
+        }
+    }
+
+    public void promotePawn(Board board, Piece pawn, int x, int y) {
+        if (pawn.getClass() == Pawn.class && (x == 7 || x == 0)) {
+            Queen newQueen = new Queen(pawn.isWhite, y, x);
+            board.getBoard().get(y).set(x, newQueen);
+            if (pawn.isWhite) {
+                board.getWhitePieces().remove(pawn);
+                board.getWhitePieces().add(newQueen);
+            } else {
+                board.getBlackPieces().remove(pawn);
+                board.getBlackPieces().add(newQueen);
+            }
+            board.getBoard().get(x).set(y, newQueen);
+            System.out.println("Pawn has been promoted to a Queen!");
         }
     }
 }
