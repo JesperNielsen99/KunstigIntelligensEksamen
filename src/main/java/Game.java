@@ -19,8 +19,6 @@ public class Game {
     public static void run() {
         while (true) {
             if (!move.isGameOver(board)) {
-                move.takeTurn(board, board.getPlayer());
-                /*
                 if (!ai.isWhite) {
                     move.takeTurn(board, board.getPlayer());
                     System.out.println(board);
@@ -35,7 +33,6 @@ public class Game {
                 }
                 System.out.println("Game Over! The Player is the Winner!");
                 break;
-                */
             }
         }
     }

@@ -166,7 +166,7 @@ public class AI {
     }
 
     public void aiMove(Board board) {
-        int initialDepth = 4;
+        int initialDepth = 3;
         double[] result = minimax(board, initialDepth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, initialDepth);
         double bestMoveScore = result[0];
         int bestPieceRow = (int) result[1];
@@ -181,6 +181,7 @@ public class AI {
         // Perform the best move found by the minimax algorithm
         if (bestPieceRow != -1 && bestPieceCol != -1 && bestMoveRow != -1 && bestMoveCol != -1) {
             executeBestMove(board, bestPieceRow, bestPieceCol, bestMoveRow, bestMoveCol);
+            board.changeTurns();
         } else {
             System.out.println("No valid move found!");
         }

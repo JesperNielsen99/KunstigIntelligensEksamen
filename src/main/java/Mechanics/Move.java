@@ -37,7 +37,6 @@ public class Move {
     }
 
     public boolean isKingInCheck(Board board, boolean isWhite) {
-
         ArrayList<ArrayList<Integer>> legalMoves;
         ArrayList<Piece> enemyPieces = isWhite ? board.getBlackPieces() : board.getWhitePieces();
         Piece king = board.findKing(isWhite);
@@ -47,6 +46,7 @@ public class Move {
 
         ArrayList<Piece> piecesToTry = new ArrayList<>();
         piecesToTry.add(new Knight(kingWhite, kingX, kingY));
+        piecesToTry.add(new Queen(kingWhite, kingX, kingY));
         piecesToTry.add(new Rook(kingWhite, kingX, kingY));
         piecesToTry.add(new Bishop(kingWhite, kingX, kingY));
         piecesToTry.add(new Pawn(kingWhite, kingX, kingY));
@@ -67,7 +67,6 @@ public class Move {
                 }
             }
         }
-
         return false;
     }
 
@@ -106,17 +105,17 @@ public class Move {
             if (isWithinBounds(move) && !isOccupied(board, move) && direction == piece.directions.get(0)) {
                 checkMove(board, piece, legalMoves, checkIfKingIsInCheck, oldX, oldY, move);
                 boolean canMoveAgain = false;
-                if (piece.isFirstMove && isWithinBounds(move) && !isOccupiedBySameColor(board, move, piece.isWhite)) {
-                    canMoveAgain = true;
-                }
                 move = new ArrayList<>();
                 move.add(newX+direction.get(0));
                 move.add(newY+direction.get(1));
-                if (piece.isFirstMove && isWithinBounds(move) && canMoveAgain) {
+                if (piece.isFirstMove && isWithinBounds(move)) {
+                    canMoveAgain = true;
+                }
+                if (canMoveAgain && !isOccupied(board, move)) {
                     checkMove(board, piece, legalMoves, checkIfKingIsInCheck, oldX, oldY, move);
                 }
-            } else if (isOccupied(board, move) && !isOccupiedBySameColor(board, move, piece.isWhite) && direction != piece.directions.get(0)) {
-                legalMoves.add(move);
+            } else if (isOccupied(board, move) && direction != piece.directions.get(0)) {
+                checkMove(board, piece, legalMoves, checkIfKingIsInCheck, oldX, oldY, move);
             }
         }
         return legalMoves;
@@ -361,6 +360,7 @@ public class Move {
                 takeTurn(board, isWhite);
             }
         } else {
+            System.out.println("Is In Check: " + isKingInCheck(board, board.getPlayer()));
             ArrayList<Piece> pieces = isWhite ? new ArrayList<>(board.getWhitePieces()) : new ArrayList<>(board.getBlackPieces());
             for (Piece piece : pieces) {
                 ArrayList<ArrayList<Integer>> legalMoves = getLegalMoves(board, piece, true);
@@ -372,6 +372,7 @@ public class Move {
                     System.out.println(piece + ": " + oldFile + oldRank + " " + file + rank);
                 }
             }
+            takeTurn(board, isWhite);
         }
     }
 }
