@@ -313,8 +313,6 @@ public class Move {
         return coordinates;
     }
 
-//
-
     public void takeTurn(Board board, boolean isWhite) {
         System.out.println(board);
         System.out.println("Which piece would you like to move?");

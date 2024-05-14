@@ -10,21 +10,10 @@ public class Board {
     ArrayList<Piece> whitePieces = new ArrayList<>();
     ArrayList<Piece> blackPieces = new ArrayList<>();
     boolean whitePlayer = true;
+    int turnCounter;
 
     public Board() {
-    }
-
-    public Board(Board board) {
-        for (int i = 0; i < board.getBoard().size(); i++) {
-            ArrayList<Piece> newRow = new ArrayList<>(); // Create a new row for this.board
-            for (int j = 0; j < board.getBoard().get(i).size(); j++) {
-                Piece piece = board.getBoard().get(i).get(j);
-                newRow.add(piece); // Add each piece from the original board to the new row
-            }
-            this.board.add(newRow); // Add the new row to this.board
-        }
-        fillColorArrays();
-        this.whitePlayer = board.getPlayer();
+        turnCounter = 0;
     }
 
     public void initializeBoard() {
@@ -103,6 +92,7 @@ public class Board {
 
     public void changeTurns() {
         whitePlayer = !whitePlayer;
+        turnCounter++;
     }
 
     public boolean getPlayer() {
@@ -180,9 +170,6 @@ public class Board {
         // Remove the piece from its respective color list.
         ArrayList<Piece> targetList = piece.isWhite ? whitePieces : blackPieces;
         targetList.remove(piece);
-
-
-        //System.out.println("Removed piece from (" + x + "," + y + ")");
     }
 
 
@@ -207,7 +194,6 @@ public class Board {
     }
 
     public Piece movePiece(Piece piece, int newX, int newY) {
-        //System.out.println("Moving piece from (" + piece.currentXPosition + ", " + piece.currentYPosition + ") to (" + newX + ", " + newY + ")");
         int currentX = piece.currentXPosition;
         int currentY = piece.currentYPosition;
         Piece pieceCaptured = getPieceAt(newX, newY);

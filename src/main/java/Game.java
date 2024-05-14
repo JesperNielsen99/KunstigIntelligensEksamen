@@ -27,6 +27,7 @@ public class Game {
                     ai.aiMove(board);
                     move.takeTurn(board, board.getPlayer());
                 }
+                System.out.println("CRASH TEST!");
             } else {
                 if (board.getPlayer()) {
                     System.out.println("Game Over! The AI is the Winner!");
