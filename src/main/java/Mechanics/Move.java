@@ -369,20 +369,4 @@ public class Move {
             takeTurn(board, isWhite);
         }
     }
-
-    public void promotePawn(Board board, Piece pawn, int x, int y) {
-        if (pawn.getClass() == Pawn.class && (x == 7 || x == 0)) {
-            Queen newQueen = new Queen(pawn.isWhite, y, x);
-            board.getBoard().get(y).set(x, newQueen);
-            if (pawn.isWhite) {
-                board.getWhitePieces().remove(pawn);
-                board.getWhitePieces().add(newQueen);
-            } else {
-                board.getBlackPieces().remove(pawn);
-                board.getBlackPieces().add(newQueen);
-            }
-            board.getBoard().get(x).set(y, newQueen);
-            System.out.println("Pawn has been promoted to a Queen!");
-        }
-    }
 }
