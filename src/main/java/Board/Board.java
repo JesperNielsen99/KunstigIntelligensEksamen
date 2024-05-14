@@ -7,14 +7,16 @@ import java.util.ArrayList;
 public class Board {
 
     ArrayList<ArrayList<Piece>> board = new ArrayList<>();
-    ArrayList<Piece> blackPieces = new ArrayList<>();
     ArrayList<Piece> whitePieces = new ArrayList<>();
+    ArrayList<Piece> blackPieces = new ArrayList<>();
+    boolean whitePlayer = true;
+    int turnCounter;
 
     public Board() {
+        turnCounter = 0;
     }
 
     public void initializeBoard() {
-
         for (int i = 0; i < 8; i++) {
             ArrayList<Piece> row = new ArrayList<>();
             for (int j = 0; j < 8; j++) {
@@ -30,10 +32,6 @@ public class Board {
             board.get(1).set(i, new Pawn(true, 1, i)); // White Pawns
             board.get(6).set(i, new Pawn(false, 6, i)); // Black Pawns
         }
-
-
-
-
 
         // Setup Rooks
         board.get(0).set(0, new Rook(true, 0, 0)); // White Rook
@@ -59,7 +57,6 @@ public class Board {
 
         //Setup King
         board.get(0).set(4, new King(true, 0, 4)); // White
-        //board.get(1).set(3, new King(true, 1, 3)); //White
         board.get(7).set(4, new King(false, 7, 4)); // Black
         fillColorArrays();
     }
@@ -93,6 +90,15 @@ public class Board {
         return null;
     }
 
+    public void changeTurns() {
+        whitePlayer = !whitePlayer;
+        turnCounter++;
+    }
+
+    public boolean getPlayer() {
+        return whitePlayer;
+    }
+
     //public void updatePiece() {}
 
     private void fillColorArrays() {
@@ -107,6 +113,93 @@ public class Board {
                 }
             }
         }
+    }
+
+    public Piece getPieceAt(int x, int y) {
+        // Check if coordinates are out of bounds
+        if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+            return null; // Return null if out of bounds
+        }
+        return board.get(x).get(y); // Return the piece at the specified location
+    }
+
+    public void setPieceAt(Piece piece, int x, int y) {
+        // First, check if the specified coordinates are within the board's bounds.
+        if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+            throw new IndexOutOfBoundsException("Coordinates are out of the board's bounds.");
+        }
+
+        // Retrieve the current piece at the specified location, if any.
+        Piece currentPiece = getPieceAt(x, y);
+
+
+        if (currentPiece != null) {
+            removePiece(currentPiece);
+        }
+
+        // Place the new piece at the specified location on the board.
+        board.get(x).set(y, piece);
+
+
+
+        if (piece != null) {
+            piece.currentXPosition = x;
+            piece.currentYPosition = y;
+
+            managePieceListAddition(piece);
+        }
+    }
+
+    private void managePieceListAddition(Piece piece) {
+        // Determine the correct list based on the piece's color.
+        ArrayList<Piece> targetList = piece.isWhite ? whitePieces : blackPieces;
+
+        if (!targetList.contains(piece)) {
+            targetList.add(piece);
+        }
+    }
+
+    public void removePiece(Piece piece) {
+        // Extract the piece's coordinates.
+        int x = piece.currentXPosition;
+        int y = piece.currentYPosition;
+
+        // Remove the piece from the board by setting its position to null.
+        board.get(x).set(y, null);
+
+        // Remove the piece from its respective color list.
+        ArrayList<Piece> targetList = piece.isWhite ? whitePieces : blackPieces;
+        targetList.remove(piece);
+    }
+
+
+    public void undoMove(Piece piece, Piece capturedPiece, int oldX, int oldY, int newX, int newY) {
+        if (capturedPiece != null) {
+            capturedPiece.currentXPosition = newX;
+            capturedPiece.currentYPosition = newY;
+
+            // Add the piece to the correct list of pieces (white or black)
+            if (capturedPiece.isWhite) {
+                if (!whitePieces.contains(capturedPiece)) {
+                    whitePieces.add(capturedPiece);
+                }
+            } else {
+                if (!blackPieces.contains(capturedPiece)) {
+                    blackPieces.add(capturedPiece);
+                }
+            }
+        }
+        setPieceAt(capturedPiece, newX, newY);
+        setPieceAt(piece, oldX, oldY);
+    }
+
+    public Piece movePiece(Piece piece, int newX, int newY) {
+        int currentX = piece.currentXPosition;
+        int currentY = piece.currentYPosition;
+        Piece pieceCaptured = getPieceAt(newX, newY);
+        setPieceAt(null, currentX, currentY);
+        setPieceAt(piece, newX, newY);
+        return pieceCaptured;
     }
 
     public String toString() {
