@@ -161,6 +161,8 @@ public class Move {
                                     if (canShortCastle(board, piece) || canLongCastle(board, piece)){
                                         legalMoves.add(move);
                                     }
+                                } else if (piece.getClass() == King.class && !(nextX == x + 2 || nextX == x - 2)){
+                                    legalMoves.add(move);
                                 } else if (piece.getClass() != King.class){
                                     legalMoves.add(move);
                                 }
@@ -438,25 +440,42 @@ public class Move {
 
 
     public boolean canShortCastle(Board board, Piece king) {
+        int rookX = king.currentXPosition;
+        int rookY = king.currentYPosition + 3;
+        boolean rookExists = board.getBoard().get(rookX).get(rookY) != null;
+        boolean rookAtDefaultPos = rookExists && board.getBoard().get(rookX).get(rookY).getClass() == Rook.class;
+        boolean isFirstRookMove = rookExists && board.getBoard().get(rookX).get(rookY).isFirstMove;
         if (isKingInCheck(board, king).isEmpty()){
             return board.getBoard().get(0).get(5) == null
-                    && board.getBoard().get(0).get(6) == null;
+                    && board.getBoard().get(0).get(6) == null
+                    && rookAtDefaultPos
+                    && isFirstRookMove;
         }
         return false;
     }
 
     public boolean canLongCastle(Board board, Piece king) {
+        int rookX = king.currentXPosition;
+        int rookY = king.currentYPosition - 4;
+        boolean rookExists = board.getBoard().get(rookX).get(rookY) != null;
+        boolean rookAtDefaultPos = rookExists && board.getBoard().get(rookX).get(rookY).getClass() == Rook.class;
+        boolean isFirstRookMove = rookExists && board.getBoard().get(rookX).get(rookY).isFirstMove;
+
         if (isKingInCheck(board, king).isEmpty()){
             return board.getBoard().get(0).get(1) == null
-                    && board.getBoard().get(0).get(2) == null;
+                    && board.getBoard().get(0).get(2) == null
+                    && rookAtDefaultPos
+                    && isFirstRookMove;
         }
         return false;
     }
 
     public boolean isCastleMove(Piece piece, ArrayList<Integer> coord){
         if (piece.getClass() == King.class && piece.isWhite && piece.isFirstMove) {
-            boolean isCastleMove = coord.equals(new ArrayList<>(Arrays.asList(0, 6)))
-                    || coord.equals(new ArrayList<>(Arrays.asList(0, 2)));
+            boolean isLongCastle = coord.equals(new ArrayList<>(Arrays.asList(0, 6)));
+            boolean isShortCastle = coord.equals(new ArrayList<>(Arrays.asList(0, 2)));
+            boolean isCastleMove = isLongCastle
+                    || isShortCastle;
             return isCastleMove;
         }
 
@@ -670,6 +689,7 @@ public class Move {
                         piece.currentYPosition = newY;
                         board.getBoard().get(newX).set(newY, piece);
                         piece.isFirstMove = false;
+                        updateCastlingState(board);
                     } else {
                         System.out.println("Illegal move. Please Select a new move.");
                         movePiece(board, isWhite);
@@ -691,6 +711,21 @@ public class Move {
         } else {
             System.out.println("Move your own piece. Please Select a new move.");
             movePiece(board, isWhite);
+        }
+    }
+
+    public void updateCastlingState(Board board) {
+        King whiteKing = (King) board.findKing(true);
+        King blackKing = (King) board.findKing(false);
+
+        if (!canShortCastle(board, whiteKing) && canShortCastle(board, whiteKing)){
+            whiteKing.directions.remove(8);
+            whiteKing.directions.remove(9);
+        }
+
+        if (!canShortCastle(board, blackKing) && !canLongCastle(board, blackKing)){
+            blackKing.directions.remove(8);
+            blackKing.directions.remove(9);
         }
     }
 }
