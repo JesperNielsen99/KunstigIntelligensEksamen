@@ -10,21 +10,10 @@ public class Board {
     ArrayList<Piece> whitePieces = new ArrayList<>();
     ArrayList<Piece> blackPieces = new ArrayList<>();
     boolean whitePlayer = true;
+    int turnCounter;
 
     public Board() {
-    }
-
-    public Board(Board board) {
-        for (int i = 0; i < board.getBoard().size(); i++) {
-            ArrayList<Piece> newRow = new ArrayList<>(); // Create a new row for this.board
-            for (int j = 0; j < board.getBoard().get(i).size(); j++) {
-                Piece piece = board.getBoard().get(i).get(j);
-                newRow.add(piece); // Add each piece from the original board to the new row
-            }
-            this.board.add(newRow); // Add the new row to this.board
-        }
-        fillColorArrays();
-        this.whitePlayer = board.getPlayer();
+        turnCounter = 0;
     }
 
     public void initializeBoard() {
@@ -36,6 +25,7 @@ public class Board {
             board.add(row);
         }
 
+
         // Setup Pawns
         for (int i = 0; i < 8; i++) {
             // Assuming black is at the top (0) and white at the bottom (7)
@@ -46,41 +36,30 @@ public class Board {
 
 
 
-
         // Setup Rooks
-
-        Rook scuffedWhiteRook1 = new Rook(true, 0, 0);
-        scuffedWhiteRook1.setIsFirstMove(true);
-        board.get(0).set(0, scuffedWhiteRook1);
-
-        Rook scuffedWhiteRook2 = new Rook(true, 0, 7);
-        scuffedWhiteRook2.setIsFirstMove(true);
-        //board.get(0).set(7, scuffedWhiteRook2);
-
-        //board.get(0).set(0, new Rook(true, 0, 0)); // White Rook
-        //board.get(0).set(7, new Rook(true, 0, 7)); // White Rook
+        board.get(0).set(0, new Rook(true, 0, 0)); // White Rook
+        board.get(0).set(7, new Rook(true, 0, 7)); // White Rook
         board.get(7).set(0, new Rook(false, 7, 0)); // Black Rook
         board.get(7).set(7, new Rook(false, 7, 7)); // Black Rook
 
         // Setup Queen
-        board.get(1).set(3, new Queen(true, 1, 3)); // White
+        board.get(0).set(3, new Queen(true, 0, 3)); // White
         board.get(7).set(3, new Queen(false, 7, 3)); // Black
 
         //Setup Bishop
-        board.get(1).set(2, new Bishop(true, 1, 2)); // White
-        board.get(1).set(5, new Bishop(true, 1, 5)); // White
+        board.get(0).set(2, new Bishop(true, 0, 2)); // White
+        board.get(0).set(5, new Bishop(true, 0, 5)); // White
         board.get(7).set(2, new Bishop(false, 7, 2)); // Black
         board.get(7).set(5, new Bishop(false, 7, 5)); // Black
 
         //Setup Knight (N)
-        board.get(1).set(1, new Knight(true, 1, 1)); // White
-        board.get(1).set(6, new Knight(true, 1, 6)); // White
+        board.get(0).set(1, new Knight(true, 0, 1)); // White
+        board.get(0).set(6, new Knight(true, 0, 6)); // White
         board.get(7).set(1, new Knight(false, 7, 1)); // Black
         board.get(7).set(6, new Knight(false, 7, 6)); // Black
 
         //Setup King
         board.get(0).set(4, new King(true, 0, 4)); // White
-
         board.get(7).set(4, new King(false, 7, 4)); // Black
         fillColorArrays();
     }
@@ -114,8 +93,27 @@ public class Board {
         return null;
     }
 
+    public ArrayList<Piece> findRooks(boolean isWhite) {
+        ArrayList<Piece> rooks = new ArrayList<>();
+        if (isWhite) {
+            for (Piece piece : whitePieces) {
+                if (piece.getClass() == Rook.class) {
+                    rooks.add(piece);
+                }
+            }
+        } else {
+            for (Piece piece : blackPieces) {
+                if (piece.getClass() == Rook.class) {
+                    rooks.add(piece);
+                }
+            }
+        }
+        return rooks;
+    }
+
     public void changeTurns() {
         whitePlayer = !whitePlayer;
+        turnCounter++;
     }
 
     public boolean getPlayer() {
@@ -138,7 +136,6 @@ public class Board {
         }
     }
 
-    //    <<<<<<<<<<<<< NYT >>>>>>>>>>>>>>>>>>>>>>>>>
     public Piece getPieceAt(int x, int y) {
         // Check if coordinates are out of bounds
         if (x < 0 || x >= 8 || y < 0 || y >= 8) {
@@ -147,62 +144,84 @@ public class Board {
         return board.get(x).get(y); // Return the piece at the specified location
     }
 
-    public void removePiece(Piece piece) {
-        if (piece == null) {
-            return; // If there's no piece, there's nothing to remove
-        }
-        // Get the current coordinates of the piece
-        int x = piece.currentXPosition;
-        int y = piece.currentYPosition;
-
-        // Set the board position to null to remove the piece
-        board.get(x).set(y, null);
-
-        // Also remove the piece from the respective list of pieces
-        if (piece.isWhite) {
-            whitePieces.remove(piece);
-        } else {
-            blackPieces.remove(piece);
-        }
-    }
-
     public void setPieceAt(Piece piece, int x, int y) {
-        // Check if the coordinates are out of bounds
+        // First, check if the specified coordinates are within the board's bounds.
         if (x < 0 || x >= 8 || y < 0 || y >= 8) {
             throw new IndexOutOfBoundsException("Coordinates are out of the board's bounds.");
         }
 
-        // Get the current piece at the location (if any)
+        // Retrieve the current piece at the specified location, if any.
         Piece currentPiece = getPieceAt(x, y);
 
-        // If there is a piece currently at the location, remove it
+
         if (currentPiece != null) {
             removePiece(currentPiece);
         }
 
-        // Place the new piece at the specified location
+        // Place the new piece at the specified location on the board.
         board.get(x).set(y, piece);
 
-        // Update the piece's position if it is not null
+
+
         if (piece != null) {
             piece.currentXPosition = x;
             piece.currentYPosition = y;
 
-            // Add the piece to the correct list of pieces (white or black)
-            if (piece.isWhite) {
-                if (!whitePieces.contains(piece)) {
-                    whitePieces.add(piece);
-                }
-            } else {
-                if (!blackPieces.contains(piece)) {
-                    blackPieces.add(piece);
-                }
-            }
+            managePieceListAddition(piece);
         }
     }
 
+    private void managePieceListAddition(Piece piece) {
+        // Determine the correct list based on the piece's color.
+        ArrayList<Piece> targetList = piece.isWhite ? whitePieces : blackPieces;
 
-//    <<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        if (!targetList.contains(piece)) {
+            targetList.add(piece);
+        }
+    }
+
+    public void removePiece(Piece piece) {
+        // Extract the piece's coordinates.
+        int x = piece.currentXPosition;
+        int y = piece.currentYPosition;
+
+        // Remove the piece from the board by setting its position to null.
+        board.get(x).set(y, null);
+
+        // Remove the piece from its respective color list.
+        ArrayList<Piece> targetList = piece.isWhite ? whitePieces : blackPieces;
+        targetList.remove(piece);
+    }
+
+
+    public void undoMove(Piece piece, Piece capturedPiece, int oldX, int oldY, int newX, int newY) {
+        if (capturedPiece != null) {
+            capturedPiece.currentXPosition = newX;
+            capturedPiece.currentYPosition = newY;
+
+            // Add the piece to the correct list of pieces (white or black)
+            if (capturedPiece.isWhite) {
+                if (!whitePieces.contains(capturedPiece)) {
+                    whitePieces.add(capturedPiece);
+                }
+            } else {
+                if (!blackPieces.contains(capturedPiece)) {
+                    blackPieces.add(capturedPiece);
+                }
+            }
+        }
+        setPieceAt(capturedPiece, newX, newY);
+        setPieceAt(piece, oldX, oldY);
+    }
+
+    public Piece movePiece(Piece piece, int newX, int newY) {
+        int currentX = piece.currentXPosition;
+        int currentY = piece.currentYPosition;
+        Piece pieceCaptured = getPieceAt(newX, newY);
+        setPieceAt(null, currentX, currentY);
+        setPieceAt(piece, newX, newY);
+        return pieceCaptured;
+    }
 
     public String toString() {
         String boardString = "------------------\n";
@@ -213,13 +232,11 @@ public class Board {
                     boardString += " |";
                 } else {
                     boardString += board.get(8-i-1).get(j).toString() + "|";
-                }
+                    }
             }
             boardString += "\n------------------\n";
         }
         boardString += "  a b c d e f g h";
         return boardString;
     }
-
-
 }

@@ -1,34 +1,40 @@
 import Board.Board;
 import Mechanics.Move;
-import Pieces.Bishop;
 import Pieces.Piece;
+import AI.AI;
 
 public class Game {
     static Move move;
     static Board board;
-    static Piece piece;
+    static AI ai;
 
     public static void main(String[] args) {
         board = new Board();
         move = new Move();
+        ai = new AI(false);
         board.initializeBoard();
         run();
     }
 
     public static void run() {
         while (true) {
-//            Piece bishop = new Bishop(true, 2, 3);
-//            Piece.printPieceBoardHeuristicValues(bishop);
-//            Piece.printHeuristicValues(board);
-
-
-
-            move.movePiece(board, true);
-            //AI do black stuff
-            //AI.move(board, false);
-
-            Piece.printHeuristicValues(board);
-            move.movePiece(board, false);
+            if (!move.isGameOver(board)) {
+                if (!ai.isWhite) {
+                    move.takeTurn(board, board.getPlayer());
+                    System.out.println(board);
+                    ai.aiMove(board);
+                } else {
+                    ai.aiMove(board);
+                    move.takeTurn(board, board.getPlayer());
+                }
+                System.out.println("CRASH TEST!");
+            } else {
+                if (board.getPlayer()) {
+                    System.out.println("Game Over! The AI is the Winner!");
+                }
+                System.out.println("Game Over! The Player is the Winner!");
+                break;
+            }
         }
     }
 
