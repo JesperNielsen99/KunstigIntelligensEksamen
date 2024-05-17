@@ -26,6 +26,7 @@ public class Board {
         }
 
 
+
         // Setup Pawns
         for (int i = 0; i < 8; i++) {
             // Assuming black is at the top (0) and white at the bottom (7)
@@ -33,6 +34,8 @@ public class Board {
             board.get(1).set(i, new Pawn(true, 1, i)); // White Pawns
             board.get(6).set(i, new Pawn(false, 6, i)); // Black Pawns
         }
+
+
 
 
 
