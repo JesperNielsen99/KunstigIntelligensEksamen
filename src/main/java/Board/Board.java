@@ -25,6 +25,8 @@ public class Board {
             board.add(row);
         }
 
+
+
         // Setup Pawns
         for (int i = 0; i < 8; i++) {
             // Assuming black is at the top (0) and white at the bottom (7)
@@ -32,6 +34,10 @@ public class Board {
             board.get(1).set(i, new Pawn(true, 1, i)); // White Pawns
             board.get(6).set(i, new Pawn(false, 6, i)); // Black Pawns
         }
+
+
+
+
 
         // Setup Rooks
         board.get(0).set(0, new Rook(true, 0, 0)); // White Rook
@@ -88,6 +94,24 @@ public class Board {
             }
         }
         return null;
+    }
+
+    public ArrayList<Piece> findRooks(boolean isWhite) {
+        ArrayList<Piece> rooks = new ArrayList<>();
+        if (isWhite) {
+            for (Piece piece : whitePieces) {
+                if (piece.getClass() == Rook.class) {
+                    rooks.add(piece);
+                }
+            }
+        } else {
+            for (Piece piece : blackPieces) {
+                if (piece.getClass() == Rook.class) {
+                    rooks.add(piece);
+                }
+            }
+        }
+        return rooks;
     }
 
     public void changeTurns() {

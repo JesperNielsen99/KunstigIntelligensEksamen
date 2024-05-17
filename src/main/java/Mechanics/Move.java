@@ -3,6 +3,7 @@ import Pieces.*;
 import Board.Board;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Move {
@@ -72,6 +73,11 @@ public class Move {
 
     public ArrayList<ArrayList<Integer>> getLegalMoves(Board board, Piece piece, boolean checkIfKingIsCheck) {
         ArrayList<ArrayList<Integer>> legalMoves = new ArrayList<>();
+
+        if (piece.getClass() == King.class && !piece.isFirstMove){
+            toggleCanCastle(piece);
+        }
+
         if (checkIfKingIsCheck) {
             if (piece.getClass() == Bishop.class || piece.getClass() == Rook.class || piece.getClass() == Queen.class) {
                 legalMoves.addAll(getLegalMultipleMoves(board, piece, checkIfKingIsCheck));
@@ -86,6 +92,7 @@ public class Move {
             } else if (piece.getClass() == Pawn.class) {
                 legalMoves.addAll(getLegalPawnMoves(board, piece, checkIfKingIsCheck));
             } else {
+                checkForKingAlreadyMoved(board, piece);
                 legalMoves.addAll(getLegalSingleMoves(board, piece, checkIfKingIsCheck));
             }
         }
@@ -165,10 +172,174 @@ public class Move {
         return legalMoves;
     }
 
+    public boolean canShortCastle(Board board, Piece king) {
+        ArrayList<Piece> rooks = board.findRooks(king.isWhite);
+        boolean rookHasMoved = true;
+        if (king.isWhite){
+            for (Piece rook : rooks) {
+                if (rook.currentXPosition == 0 && rook.currentYPosition == 7 && rook.isFirstMove){
+                    rookHasMoved = false;
+                }
+            }
+            if (!isKingInCheck(board, true) && !rookHasMoved){
+                return board.getBoard().get(0).get(6) == null
+                        && board.getBoard().get(0).get(5) == null
+                        && king.isFirstMove;
+            }
+
+        }
+        if (!king.isWhite) {
+            for (Piece rook : rooks) {
+                if (rook.currentXPosition == 7 && rook.currentYPosition == 7 && rook.isFirstMove) {
+                    rookHasMoved = false;
+                }
+            }
+            if (!isKingInCheck(board, false ) && !rookHasMoved){
+                return board.getBoard().get(7).get(6) == null
+                        && board.getBoard().get(7).get(5) == null
+                        && king.isFirstMove;
+            }
+        }
+        return false;
+    }
+
+    public boolean canLongCastle(Board board, Piece king) {
+        ArrayList<Piece> rooks = board.findRooks(king.isWhite);
+        boolean rookHasMoved = true;
+        if (king.isWhite){
+            for (Piece rook : rooks) {
+                if (rook.currentXPosition == 0 && rook.currentYPosition == 0 && rook.isFirstMove){
+                    rookHasMoved = false;
+                }
+            }
+            if (!isKingInCheck(board, true) && !rookHasMoved){
+                return board.getBoard().get(0).get(1) == null
+                        && board.getBoard().get(0).get(2) == null
+                        && board.getBoard().get(0).get(3) == null
+                        && king.isFirstMove;
+            }
+        }
+        if (!king.isWhite){
+            for (Piece rook : rooks) {
+                if (rook.currentXPosition == 7 && rook.currentYPosition == 7 && rook.isFirstMove){
+                    rookHasMoved = false;
+                }
+            }
+                if (!isKingInCheck(board, false) && !rookHasMoved){
+                    return board.getBoard().get(7).get(1) == null
+                            && board.getBoard().get(7).get(2) == null
+                            && board.getBoard().get(7).get(3) == null
+                            && king.isFirstMove;
+                }
+        }
+        return false;
+    }
+
+    public boolean checkAndDoCastle(Piece king, Board board, ArrayList<Integer> coord) {
+        boolean didCastle = false;
+
+        if (isCastleMove(king, coord)){
+            if (king.currentYPosition < coord.get(1) && canShortCastle(board, king)) {
+                didCastle = true;
+                castleShort(board, king);
+            } else if (king.currentYPosition > coord.get(1) && canLongCastle(board, king)) {
+                didCastle = true;
+                castleLong(board, king);
+            }
+        }
+
+        return didCastle;
+    }
+
+    public boolean isCastleMove(Piece piece, ArrayList<Integer> coord){
+        if (piece.getClass() == King.class && piece.isWhite && piece.isFirstMove) {
+            boolean isCastleMove = coord.equals(new ArrayList<>(Arrays.asList(0, 6)))
+                    || coord.equals(new ArrayList<>(Arrays.asList(0, 2)));
+            return isCastleMove;
+        }
+
+        if (piece.getClass() == King.class && !piece.isWhite && piece.isFirstMove) {
+            return coord.equals(new ArrayList<>(Arrays.asList(7, 2)))
+                    || coord.equals(new ArrayList<>(Arrays.asList(7, 6)));
+        }
+        return false;
+    }
+
+
+    public void castleShort(Board board, Piece piece){
+        final int kingX = piece.currentXPosition;
+        final int kingY = piece.currentYPosition;
+        if (piece.isWhite) {
+            Piece rook = board.getBoard().get(0).get(7);
+            final int rookX = rook.currentXPosition;
+            final int rookY = rook.currentYPosition;
+            board.setPieceAt(piece, 0, 6);
+            board.getBoard().get(kingX).set(kingY, null);
+            board.setPieceAt(rook, 0, 5);
+            board.getBoard().get(rookX).set(rookY, null);
+
+        } else {
+            Piece rook = board.getBoard().get(7).get(7);
+            final int rookX = rook.currentXPosition;
+            final int rookY = rook.currentYPosition;
+            board.setPieceAt(piece, 7, 6);
+            board.getBoard().get(kingX).set(kingY, null);
+            board.setPieceAt(rook, 7, 5);
+            board.getBoard().get(rookX).set(rookY, null);
+        }
+    }
+
+    public void castleLong(Board board, Piece piece) {
+        final int kingX = piece.currentXPosition;
+        final int kingY = piece.currentYPosition;
+        if (piece.isWhite) {
+            Piece rook = board.getBoard().get(0).get(0);
+            final int rookX = rook.currentXPosition;
+            final int rookY = rook.currentYPosition;
+            board.setPieceAt(piece, 0, 2);
+            board.getBoard().get(kingX).set(kingY, null);
+            board.setPieceAt(rook, 0, 3);
+            board.getBoard().get(rookX).set(rookY, null);
+        } else {
+            Piece rook = board.getBoard().get(7).get(0);
+            final int rookX = rook.currentXPosition;
+            final int rookY = rook.currentYPosition;
+            board.setPieceAt(piece, 7, 2);
+            board.getBoard().get(kingX).set(kingY, null);
+            board.setPieceAt(rook, 7, 3);
+            board.getBoard().get(rookX).set(rookY, null);
+        }
+    }
+
+    public void castleWhiteLong(Board board) {
+        Rook rook = (Rook) board.getBoard().get(0).get(0);
+        board.getBoard().get(0).set(0, null);
+        board.getBoard().get(0).set(3, rook);
+    }
+
+    public void castleWhiteShort(Board board) {
+        Rook rook = (Rook) board.getBoard().get(0).get(7);
+        board.getBoard().get(0).set(7, null);
+        board.getBoard().get(0).set(5, rook);
+    }
+
+    public void castleBlackLong(Board board){
+        Rook rook = (Rook) board.getBoard().get(7).get(0);
+        board.getBoard().get(7).set(0, null);
+        board.getBoard().get(7).set(3, rook);
+    }
+
+    public void castleBlackShort(Board board) {
+        Rook rook = (Rook) board.getBoard().get(7).get(7);
+        board.getBoard().get(7).set(7, null);
+        board.getBoard().get(7).set(5, rook);
+    }
+
     public ArrayList<ArrayList<Integer>> checkMove(Board board, Piece piece, ArrayList<ArrayList<Integer>> legalMoves, boolean checkIfKingIsInCheck, int x, int y, ArrayList<Integer> move) {
         int newX = move.get(0);
         int newY = move.get(1);
-        if (isWithinBounds(move)) {
+
+        Runnable check = () -> {
             if (checkIfKingIsInCheck) {
                 if (!isKingInCheck(board, piece.isWhite) && !isOccupiedBySameColor(board, move, piece.isWhite)) {
                     Piece capturedPiece = board.movePiece(piece, newX, newY);
@@ -188,10 +359,21 @@ public class Move {
                     board.undoMove(piece, capturedPiece, x, y, newX, newY);
                 }
             }
+        };
+        if (isWithinBounds(move)) {
+            check.run();
         }
+
         return legalMoves;
     }
 
+    public void toggleCanCastle(Piece king){
+        if (king.directions.size() == 10){
+            king.directions.remove(9
+            );
+            king.directions.remove(8);
+        }
+    }
 
     public boolean isMovePuttingOwnKingInCheck(Board board, Piece piece, ArrayList<Integer> move) {
         int oldX = piece.currentXPosition;
@@ -212,17 +394,23 @@ public class Move {
     }
 
     public Piece movePiece(Board board, Piece piece, ArrayList<Integer> move) {
-        int currentX = piece.currentXPosition;
+         int currentX = piece.currentXPosition;
         int currentY = piece.currentYPosition;
         Piece capturedPiece = board.getPieceAt(move.get(0), move.get(1));
         if (capturedPiece != null) {
             ArrayList<Piece> enemyPieces = capturedPiece.isWhite ? board.getWhitePieces() : board.getBlackPieces();
             enemyPieces.remove(capturedPiece);
         }
-        board.setPieceAt(null, currentX, currentY);
+        if (!(piece.getClass() == King.class && isCastleMove(piece, move))) {
+            board.setPieceAt(null, currentX, currentY);
+        }
         if (piece.getClass() == Pawn.class && ((piece.isWhite && move.get(0) == 7) || (!piece.isWhite && move.get(0) == 0))) {
             promotePawn(board, piece, move.get(0), move.get(1));
-        } else {
+        } else if (piece.getClass() == King.class && isCastleMove(piece, move)) {
+            checkAndDoCastle(piece, board, move);
+
+        }else {
+            //checkAndDoCastle(piece, board, move);
             piece.currentXPosition = move.get(0);
             piece.currentYPosition = move.get(1);
             board.setPieceAt(piece, move.get(0), move.get(1));
@@ -311,6 +499,28 @@ public class Move {
         return coordinates;
     }
 
+
+
+    public void checkForKingAlreadyMoved(Board board, Piece piece) {
+        if (piece.getClass() == King.class){
+            if (!piece.isFirstMove){
+                if (piece.directions.size() == 10){
+                    piece.directions.remove(9);
+                    piece.directions.remove(8);
+                }
+            }
+        }
+
+    }
+
+    public boolean checkTypeOfCastleAndIfPossible(Board board, Piece piece, ArrayList<Integer> move) {
+        if (piece.currentYPosition < move.get(1)){
+            return canShortCastle(board, piece);
+        } else {
+            return canLongCastle(board, piece);
+        }
+    }
+
     public void takeTurn(Board board, boolean isWhite) {
         System.out.println(board);
         System.out.println("Which piece would you like to move?");
@@ -333,8 +543,15 @@ public class Move {
                 ArrayList<Integer> move = new ArrayList<>();
                 move.add(newX);
                 move.add(newY);
+                //checkForKingAlreadyMoved(board, isWhite);
                 if (legalMoves.contains(move) && !isMovePuttingOwnKingInCheck(board, piece, move)) {
                     System.out.println(board);
+                    if (isCastleMove(piece, move)){
+                        if (!checkTypeOfCastleAndIfPossible(board, piece, move)){
+                            System.out.println("Castling is not currently possible.");
+                            takeTurn(board, isWhite);
+                        }
+                    }
                     Piece capturedPiece = movePiece(board, piece, move);  // This now handles all move logic
                     if (capturedPiece != null) {
                         System.out.println("Captured a piece!");
