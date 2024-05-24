@@ -23,7 +23,12 @@ public class AI {
             return new double[]{evaluate(board), -1, -1, -1, -1};
         }
 
-
+        ArrayList<Piece> pieces = new ArrayList<>();
+        if (!isWhite) {
+            pieces = isMaximizingPlayer ? new ArrayList<>(board.getBlackPieces()) : new ArrayList<>(board.getWhitePieces());
+        } else {
+            pieces = isMaximizingPlayer ? new ArrayList<>(board.getWhitePieces()) : new ArrayList<>(board.getBlackPieces());
+        }
         double bestEval = isMaximizingPlayer ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         int bestPieceRow = -1;
         int bestPieceCol = -1;
