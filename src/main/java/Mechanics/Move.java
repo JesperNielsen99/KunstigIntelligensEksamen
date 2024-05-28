@@ -510,7 +510,6 @@ public class Move {
                 }
             }
         }
-
     }
 
     public boolean checkTypeOfCastleAndIfPossible(Board board, Piece piece, ArrayList<Integer> move) {

@@ -9,7 +9,7 @@ public class Board {
     ArrayList<ArrayList<Piece>> board = new ArrayList<>();
     ArrayList<Piece> whitePieces = new ArrayList<>();
     ArrayList<Piece> blackPieces = new ArrayList<>();
-    boolean whitePlayer = false;
+    boolean whitePlayer = true;
     int turnCounter;
 
     public Board() {

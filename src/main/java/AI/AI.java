@@ -2,8 +2,6 @@ package AI;
 
 import Board.Board;
 import Mechanics.Move;
-import Pieces.King;
-import Pieces.Pawn;
 import Pieces.Piece;
 
 import java.util.ArrayList;
